@@ -5,13 +5,13 @@
 class Skret < Formula
   desc "Cloud-provider secret manager CLI with Doppler/Infisical-grade DX"
   homepage "https://skret.n24q02m.com"
-  version "1.9.0"
+  version "1.10.0-beta.1"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/n24q02m/skret/releases/download/v1.9.0/skret_1.9.0_darwin_amd64.tar.gz"
-      sha256 "cc192e9736ccf49b03b27c4a3632cc982a702158db41a5d1620d0e21e49ed5b3"
+      url "https://github.com/n24q02m/skret/releases/download/v1.10.0-beta.1/skret_1.10.0-beta.1_darwin_amd64.tar.gz"
+      sha256 "cd6967e0677226bac48b8a776ced933cfc857463a994c57ec9e6aa8fa1826e77"
 
       define_method(:install) do
         bin.install "skret"
@@ -19,8 +19,8 @@ class Skret < Formula
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/n24q02m/skret/releases/download/v1.9.0/skret_1.9.0_darwin_arm64.tar.gz"
-      sha256 "57ebf7131b938100a7b4844966b7eea5840f5ccfbe6eb0fb2548111b05e3d8c3"
+      url "https://github.com/n24q02m/skret/releases/download/v1.10.0-beta.1/skret_1.10.0-beta.1_darwin_arm64.tar.gz"
+      sha256 "14e3d266f17de06d3dd78b7c61287fbe2793990a1c6a666bfba283d9fe8b1fd6"
 
       define_method(:install) do
         bin.install "skret"
@@ -31,16 +31,16 @@ class Skret < Formula
 
   on_linux do
     if Hardware::CPU.intel? && Hardware::CPU.is_64_bit?
-      url "https://github.com/n24q02m/skret/releases/download/v1.9.0/skret_1.9.0_linux_amd64.tar.gz"
-      sha256 "13f872e3206dc7e6f3948f4f0aed492376e614f4187a4144df19308bf01e148e"
+      url "https://github.com/n24q02m/skret/releases/download/v1.10.0-beta.1/skret_1.10.0-beta.1_linux_amd64.tar.gz"
+      sha256 "e305dba9635622f8760eaeda0cbb3456d14add6e48572737b0a1690f8134db9c"
       define_method(:install) do
         bin.install "skret"
         generate_completions_from_executable(bin/"skret", "completion")
       end
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/n24q02m/skret/releases/download/v1.9.0/skret_1.9.0_linux_arm64.tar.gz"
-      sha256 "74553d6b41daf929f81ab664fff7e2a63c5a91cc9dc02d367ff1a84601da2586"
+      url "https://github.com/n24q02m/skret/releases/download/v1.10.0-beta.1/skret_1.10.0-beta.1_linux_arm64.tar.gz"
+      sha256 "6c58d58d24cc461e7e13f75bc22e83705bf4650389e5e6ef333d2a74adc241c3"
       define_method(:install) do
         bin.install "skret"
         generate_completions_from_executable(bin/"skret", "completion")
