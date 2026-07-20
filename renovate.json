@@ -1,6 +1,34 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ]
+  "extends": ["config:recommended", ":semanticCommits"],
+  "schedule": ["before 5am"],
+  "timezone": "Asia/Ho_Chi_Minh",
+  "enabledManagers": ["github-actions"],
+  "prConcurrentLimit": 2,
+  "prHourlyLimit": 1,
+  "labels": ["dependencies"],
+  "minimumReleaseAge": "7 days",
+  "packageRules": [
+    {
+      "description": "Pin GitHub Actions to SHA for security",
+      "matchManagers": ["github-actions"],
+      "pinDigests": true
+    },
+    {
+      "description": "Auto-merge GitHub Actions digest updates after cooldown",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["digest", "pinDigest"],
+      "groupName": "github-actions digests",
+      "groupSlug": "gha-digests",
+      "automerge": true,
+      "automergeType": "pr",
+      "minimumReleaseAge": "7 days"
+    }
+  ],
+  "semanticCommits": "enabled",
+  "commitMessagePrefix": "fix(deps):",
+  "commitMessageAction": "update",
+  "commitMessageTopic": "{{depName}}",
+  "semanticCommitType": "fix",
+  "semanticCommitScope": "deps"
 }
