@@ -5,23 +5,23 @@
 class BetterDrive < Formula
   desc "2-way Google Drive sync with .driveignore filter (rclone engine, Windows tray)"
   homepage "https://github.com/n24q02m/better-drive"
-  version "1.4.0"
+  version "1.5.0-beta.1"
   license "MIT"
 
   depends_on "rclone"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/n24q02m/better-drive/releases/download/v1.4.0/better-drive_1.4.0_darwin_amd64.tar.gz"
-      sha256 "c8e2dfbc097dbb5508833a1b4eee2374bd7a7fad88f8f120d4375cd9d39de0ff"
+      url "https://github.com/n24q02m/better-drive/releases/download/v1.5.0-beta.1/better-drive_1.5.0-beta.1_darwin_amd64.tar.gz"
+      sha256 "102b4909d23a712e64dc005121058b2cc4c98c3cd0d8a8fe9d33377cf19bf51b"
 
       define_method(:install) do
         bin.install "better-drive"
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/n24q02m/better-drive/releases/download/v1.4.0/better-drive_1.4.0_darwin_arm64.tar.gz"
-      sha256 "124d1d3f40e7a1dc1578e3d31b43131a98b3c6bef174be5f2cdc8baaa2557253"
+      url "https://github.com/n24q02m/better-drive/releases/download/v1.5.0-beta.1/better-drive_1.5.0-beta.1_darwin_arm64.tar.gz"
+      sha256 "745f1ac46ccd4b672ac2d04bd253122e7f61f743416074ceb2ef9ac21212490f"
 
       define_method(:install) do
         bin.install "better-drive"
@@ -31,15 +31,15 @@ class BetterDrive < Formula
 
   on_linux do
     if Hardware::CPU.intel? && Hardware::CPU.is_64_bit?
-      url "https://github.com/n24q02m/better-drive/releases/download/v1.4.0/better-drive_1.4.0_linux_amd64.tar.gz"
-      sha256 "ef2801263f27456722f241143aa26e1e0740db67cf330c99bb5ab91231b67c5f"
+      url "https://github.com/n24q02m/better-drive/releases/download/v1.5.0-beta.1/better-drive_1.5.0-beta.1_linux_amd64.tar.gz"
+      sha256 "098bb2c0ff659d5bbb091c1031f35c869a9a4f6cd60144114f252703ac714258"
       define_method(:install) do
         bin.install "better-drive"
       end
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/n24q02m/better-drive/releases/download/v1.4.0/better-drive_1.4.0_linux_arm64.tar.gz"
-      sha256 "320586bea1e3480bd4accd90f174b76a2f40418f723e397a699f106ccc7f154f"
+      url "https://github.com/n24q02m/better-drive/releases/download/v1.5.0-beta.1/better-drive_1.5.0-beta.1_linux_arm64.tar.gz"
+      sha256 "ee88b32594f9561b26a4c86bcb1e1fc8f1f5dc0175454c1b3652ebaad5477c8f"
       define_method(:install) do
         bin.install "better-drive"
       end
