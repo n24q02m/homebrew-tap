@@ -21,4 +21,4 @@ Formula files in `Formula/` are auto-updated on each upstream release by [gorele
 
 ## License
 
-MIT.
+Apache-2.0.
