@@ -4,22 +4,22 @@ cask "skret" do
 
   on_macos do
     on_intel do
-      sha256 "eeb976b05c07f4df830916e1e3b7bcb72051ebded9784e15d1fce993912d982a"
+      sha256 "74998c75d6e5e9214be5e7be2cceaa158abf607eced799aaa939564e38d88eb8"
       url "https://github.com/n24q02m/skret/releases/download/v#{version}/skret_#{version}_darwin_amd64.tar.gz"
     end
     on_arm do
-      sha256 "3879b88753b03b7ffa6ddcd04b0a2ace97ef06a55b68cc63c504d67e9cc104de"
+      sha256 "6b7f79fa3051d06a25a0cd13e1ad67981bac3b76d03bb6ed4f705a0adeba0a89"
       url "https://github.com/n24q02m/skret/releases/download/v#{version}/skret_#{version}_darwin_arm64.tar.gz"
     end
   end
 
   on_linux do
     on_intel do
-      sha256 "780cb34879c459a9380530ee510302e02da5a6484be9d138bc829711dcdc054f"
+      sha256 "39e5365a1ea8c3dd105263b7a73d67786bab64e9727c62397eb83b6fe32060e0"
       url "https://github.com/n24q02m/skret/releases/download/v#{version}/skret_#{version}_linux_amd64.tar.gz"
     end
     on_arm do
-      sha256 "4f0f0210a4183e98b5f5e5d9966438b76b6a812069f63faac29c76094f784c48"
+      sha256 "39df0fa6f5fff5be1fc5ef09ead3060d61cb10445ed774f0f4834cc4ed8a974f"
       url "https://github.com/n24q02m/skret/releases/download/v#{version}/skret_#{version}_linux_arm64.tar.gz"
     end
   end
