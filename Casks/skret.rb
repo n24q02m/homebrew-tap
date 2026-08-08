@@ -36,7 +36,7 @@ cask "skret" do
 
   generate_completions_from_executable "skret", "completion",
     shell_parameter_format: :cobra,
-    shells: [:bash, :zsh, :fish, :powershell]
+    shells: [:bash, :zsh, :fish]
 
   # No zap stanza required
 
