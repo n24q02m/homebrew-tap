@@ -17,6 +17,7 @@ jobs:
   mention:
     if: ${{ github.event.comment != null && (contains(github.event.comment.body, '/oc') || contains(github.event.comment.body, '/opencode')) && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
       issues: write
@@ -36,6 +37,7 @@ jobs:
   auto-issue:
     if: ${{ github.event_name == 'issues' && github.event.issue.user.login != github.repository_owner && github.event.issue.user.type != 'Bot' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
       issues: write
@@ -55,6 +57,7 @@ jobs:
   auto-pr:
     if: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.user.login != github.repository_owner && github.event.pull_request.user.type != 'Bot' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
       pull-requests: write
