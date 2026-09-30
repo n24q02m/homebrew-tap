@@ -12,3 +12,7 @@
 **Vulnerability:** The AI pull request review bot was authorized to issue an `APPROVE` verdict in its prompt. Since LLMs process user-controlled inputs (like code diffs), a malicious contributor could embed prompt injection instructions to trick the AI into approving a malicious PR, potentially bypassing required branch protections.
 **Learning:** LLM agents that interact with untrusted input (such as code from outside contributors) should never be granted the authority to bypass human controls (like approving a pull request) because they remain vulnerable to prompt injection attacks.
 **Prevention:** Explicitly restrict the AI agent's allowed actions in the prompt (e.g., only allow `REQUEST_CHANGES` or `COMMENT`), ensuring it cannot issue an `APPROVE` verdict.
+## 2024-05-15 - Confused Deputy Injection in ChatOps Triggers
+**Vulnerability:** Simple `startsWith` or `contains` checks for commands like `/oc` in GitHub Actions workflows can be exploited by users typing commands like `/ocean`, unintentionally triggering the workflow (Confused Deputy attack).
+**Learning:** In GitHub Actions expressions, strings are evaluated differently, and exact boundary checking is needed.
+**Prevention:** Always use strict boundary matching (`==`, space-suffixed `startsWith`, and newline-suffixed using `format` and `fromJSON`) when implementing ChatOps triggers in GitHub Actions.
