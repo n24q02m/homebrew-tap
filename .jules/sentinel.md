@@ -12,3 +12,8 @@
 **Vulnerability:** The AI pull request review bot was authorized to issue an `APPROVE` verdict in its prompt. Since LLMs process user-controlled inputs (like code diffs), a malicious contributor could embed prompt injection instructions to trick the AI into approving a malicious PR, potentially bypassing required branch protections.
 **Learning:** LLM agents that interact with untrusted input (such as code from outside contributors) should never be granted the authority to bypass human controls (like approving a pull request) because they remain vulnerable to prompt injection attacks.
 **Prevention:** Explicitly restrict the AI agent's allowed actions in the prompt (e.g., only allow `REQUEST_CHANGES` or `COMMENT`), ensuring it cannot issue an `APPROVE` verdict.
+
+## 2026-10-03 - [Confused Deputy ChatOps Injection via startsWith]
+**Vulnerability:** The ChatOps trigger `startsWith(github.event.comment.body, '/oc')` was still vulnerable to Confused Deputy injection attacks because it could match unrelated commands like `/ocean`, unintentionally triggering the workflow.
+**Learning:** While `startsWith` is better than `contains`, it is still insufficient if not bounded by spaces or newlines, as it can match prefixes of entirely different words.
+**Prevention:** Always use strict boundary matching (exact match, space-suffixed, or newline-suffixed using `fromJSON`) rather than simple `startsWith` or `contains` to prevent Confused Deputy injection attacks (e.g., unintentionally matching `/ocean` from `/oc`).
