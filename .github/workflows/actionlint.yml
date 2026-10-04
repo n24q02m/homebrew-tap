@@ -21,6 +21,6 @@ jobs:
         # Checksum verification ensures supply chain integrity.
         run: |
           wget -q https://github.com/rhysd/actionlint/releases/download/v1.7.0/actionlint_1.7.0_linux_amd64.tar.gz
-          echo "8cd92b2d69f9bdc6b45391d1797e889fb1a938c800cdcb776840742183c5ce16  actionlint_1.7.0_linux_amd64.tar.gz" | sha256sum -c -
+          echo "8aae9148f61952d11a97651852fdc7dffd2b762ed3cdd28b3c2232ae5f55d4db  actionlint_1.7.0_linux_amd64.tar.gz" | sha256sum -c -
           tar -xzf actionlint_1.7.0_linux_amd64.tar.gz actionlint
           ./actionlint
