@@ -1,0 +1,26 @@
+---
+name: actionlint
+"on":
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# 🛡️ Sentinel: Enforce read-only top-level permissions to prevent default token abuse
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run actionlint
+        # 🛡️ Sentinel: Use actionlint to statically analyze GitHub Actions workflows
+        # to prevent CI/CD security vulnerabilities like untrusted input injection.
+        # Checksum verification ensures supply chain integrity.
+        run: |
+          wget -q https://github.com/rhysd/actionlint/releases/download/v1.7.0/actionlint_1.7.0_linux_amd64.tar.gz
+          echo "8cd92b2d69f9bdc6b45391d1797e889fb1a938c800cdcb776840742183c5ce16  actionlint_1.7.0_linux_amd64.tar.gz" | sha256sum -c -
+          tar -xzf actionlint_1.7.0_linux_amd64.tar.gz actionlint
+          ./actionlint
