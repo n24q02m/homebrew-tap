@@ -12,3 +12,7 @@
 **Vulnerability:** The AI pull request review bot was authorized to issue an `APPROVE` verdict in its prompt. Since LLMs process user-controlled inputs (like code diffs), a malicious contributor could embed prompt injection instructions to trick the AI into approving a malicious PR, potentially bypassing required branch protections.
 **Learning:** LLM agents that interact with untrusted input (such as code from outside contributors) should never be granted the authority to bypass human controls (like approving a pull request) because they remain vulnerable to prompt injection attacks.
 **Prevention:** Explicitly restrict the AI agent's allowed actions in the prompt (e.g., only allow `REQUEST_CHANGES` or `COMMENT`), ensuring it cannot issue an `APPROVE` verdict.
+## 2025-01-20 - Fake Version Pin Supply Chain Risk
+**Vulnerability:** A malicious SHA was pinned for actions/checkout in .github/workflows/opencode.yml, masquerading as a non-existent future major version (v7.0.1).
+**Learning:** Pinned SHAs can be spoofed to look like legitimate future versions; supply chain integrity requires verifying that pinned SHAs correspond to legitimate, current major versions.
+**Prevention:** Always verify SHAs against official action repositories and known valid versions before updating pins.
