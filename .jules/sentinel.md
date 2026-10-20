@@ -12,3 +12,8 @@
 **Vulnerability:** The AI pull request review bot was authorized to issue an `APPROVE` verdict in its prompt. Since LLMs process user-controlled inputs (like code diffs), a malicious contributor could embed prompt injection instructions to trick the AI into approving a malicious PR, potentially bypassing required branch protections.
 **Learning:** LLM agents that interact with untrusted input (such as code from outside contributors) should never be granted the authority to bypass human controls (like approving a pull request) because they remain vulnerable to prompt injection attacks.
 **Prevention:** Explicitly restrict the AI agent's allowed actions in the prompt (e.g., only allow `REQUEST_CHANGES` or `COMMENT`), ensuring it cannot issue an `APPROVE` verdict.
+
+## 2024-10-18 - [Supply Chain Attack via Future Version Masquerading]
+**Vulnerability:** The `.github/workflows/opencode.yml` file pinned `actions/checkout` to a malicious SHA masquerading as a non-existent future version (`v7.0.1`), while the latest actual version was `v4`.
+**Learning:** Attackers may submit pull requests updating dependencies to seemingly newer, safe versions (e.g., `v7.0.1`) but link them to a malicious SHA that executes arbitrary code. Since humans often trust newer versions implicitly, these can bypass casual code review.
+**Prevention:** Always verify that pinned commit SHAs for third-party GitHub Actions correspond to legitimate, officially released tags from the maintainer, rather than trusting the version label in the comment.
