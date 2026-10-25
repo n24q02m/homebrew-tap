@@ -12,8 +12,3 @@
 **Vulnerability:** The AI pull request review bot was authorized to issue an `APPROVE` verdict in its prompt. Since LLMs process user-controlled inputs (like code diffs), a malicious contributor could embed prompt injection instructions to trick the AI into approving a malicious PR, potentially bypassing required branch protections.
 **Learning:** LLM agents that interact with untrusted input (such as code from outside contributors) should never be granted the authority to bypass human controls (like approving a pull request) because they remain vulnerable to prompt injection attacks.
 **Prevention:** Explicitly restrict the AI agent's allowed actions in the prompt (e.g., only allow `REQUEST_CHANGES` or `COMMENT`), ensuring it cannot issue an `APPROVE` verdict.
-
-## 2026-10-18 - [Malicious GitHub Action Dependency Version]
-**Vulnerability:** A workflow was using a pinned SHA that pretended to be a future major release of a popular action (e.g., `actions/checkout@v7.0.1` when only `v4` exists). The malicious tag redirected to a compromised version.
-**Learning:** Checking the SHA hash is insufficient for supply chain integrity if the associated tag name represents a non-existent version that an attacker created.
-**Prevention:** Always verify that pinned GitHub Actions SHAs correspond to legitimately published major versions by checking the official repository's releases and tags.
