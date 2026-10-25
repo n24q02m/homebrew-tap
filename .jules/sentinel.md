@@ -12,8 +12,3 @@
 **Vulnerability:** The AI pull request review bot was authorized to issue an `APPROVE` verdict in its prompt. Since LLMs process user-controlled inputs (like code diffs), a malicious contributor could embed prompt injection instructions to trick the AI into approving a malicious PR, potentially bypassing required branch protections.
 **Learning:** LLM agents that interact with untrusted input (such as code from outside contributors) should never be granted the authority to bypass human controls (like approving a pull request) because they remain vulnerable to prompt injection attacks.
 **Prevention:** Explicitly restrict the AI agent's allowed actions in the prompt (e.g., only allow `REQUEST_CHANGES` or `COMMENT`), ensuring it cannot issue an `APPROVE` verdict.
-
-## 2026-10-21 - [Malicious Dependency Pinned to Future Fake Version]
-**Vulnerability:** A workflow was pinned to `actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1`, but `v7.0.1` did not exist for this action. Malicious SHAs may masquerade as non-existent future major versions to trick reviewers.
-**Learning:** Checking that a commit SHA is explicitly pinned is not enough. You must also verify that the tag/version comment reflects a legitimate, current version (e.g., verifying `v4` exists, while `v7` does not).
-**Prevention:** Always ensure pinned SHAs correspond to actual, legitimate current major/minor versions using the public registry or repository API, and investigate any references to unexpected future versions.
