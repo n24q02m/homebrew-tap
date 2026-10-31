@@ -11,9 +11,9 @@ brew tap n24q02m/tap
 brew install skret
 ```
 
-Formula files in `Formula/` are auto-updated on each upstream release by [goreleaser](https://goreleaser.com/) — do not edit by hand.
+Cask files in `Casks/` are auto-updated on each upstream release by [goreleaser](https://goreleaser.com/) — do not edit by hand.
 
-## Available formulae
+## Available casks
 
 | Name | Description | Upstream |
 |------|-------------|----------|
