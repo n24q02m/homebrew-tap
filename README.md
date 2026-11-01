@@ -1,5 +1,12 @@
 # Homebrew tap — n24q02m
 
+**Homebrew tap for n24q02m's command-line tools, with casks updated by GoReleaser on each upstream release.**
+
+[![CI](https://github.com/n24q02m/homebrew-tap/actions/workflows/ci.yml/badge.svg)](https://github.com/n24q02m/homebrew-tap/actions/workflows/ci.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Renovate](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com)
+[![Homebrew](https://img.shields.io/badge/Homebrew-tap-FBB040?logo=homebrew&logoColor=white)](https://brew.sh)
+
 ```sh
 brew install n24q02m/tap/skret
 ```
