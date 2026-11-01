@@ -44,6 +44,9 @@ jobs:
           persist-credentials: false
       - name: Tap this checkout
         run: brew tap n24q02m/tap "$GITHUB_WORKSPACE"
+      - name: Trust this tap
+        # Homebrew refuses to load casks from an untrusted tap; this is our own checkout.
+        run: brew trust n24q02m/tap
       - name: Audit casks
         run: |
           shopt -s nullglob
