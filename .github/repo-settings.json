@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "tier": 2,
+  "description": "Homebrew tap for n24q02m's command-line tools, with casks updated by GoReleaser on each upstream release.",
+  "homepage": "https://github.com/n24q02m/homebrew-tap",
+  "topics": [
+    "homebrew",
+    "homebrew-tap",
+    "homebrew-cask",
+    "cli",
+    "goreleaser",
+    "skret"
+  ]
+}
