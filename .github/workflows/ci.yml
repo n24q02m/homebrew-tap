@@ -1,0 +1,57 @@
+name: CI
+
+"on":
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  actionlint:
+    name: actionlint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Run actionlint
+        # Statically analyzes the workflows (untrusted input injection, bad refs).
+        # The checksum pins the release archive for supply chain integrity.
+        run: |
+          wget -q https://github.com/rhysd/actionlint/releases/download/v1.7.0/actionlint_1.7.0_linux_amd64.tar.gz
+          echo "8aae9148f61952d11a97651852fdc7dffd2b762ed3cdd28b3c2232ae5f55d4db  actionlint_1.7.0_linux_amd64.tar.gz" | sha256sum -c -
+          tar -xzf actionlint_1.7.0_linux_amd64.tar.gz actionlint
+          ./actionlint
+
+  brew-audit:
+    name: brew audit
+    # Casks only audit on macOS; the hosted macOS runner ships Homebrew.
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Tap this checkout
+        run: brew tap n24q02m/tap "$GITHUB_WORKSPACE"
+      - name: Audit casks
+        run: |
+          shopt -s nullglob
+          casks=(Casks/*.rb)
+          formulae=(Formula/*.rb)
+          for f in "${casks[@]}"; do
+            brew audit --cask --strict --online "n24q02m/tap/$(basename "$f" .rb)"
+          done
+          for f in "${formulae[@]}"; do
+            brew audit --formula --strict --online "n24q02m/tap/$(basename "$f" .rb)"
+          done
