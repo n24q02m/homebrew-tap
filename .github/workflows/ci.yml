@@ -48,6 +48,9 @@ jobs:
         # Homebrew refuses to load casks from an untrusted tap; this is our own checkout.
         run: brew trust n24q02m/tap
       - name: Audit casks
+        env:
+          # --online hits the GitHub API; unauthenticated runner IPs hit the 60/hr limit.
+          HOMEBREW_GITHUB_API_TOKEN: ${{ github.token }}
         run: |
           shopt -s nullglob
           casks=(Casks/*.rb)
