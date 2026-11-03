@@ -12,6 +12,6 @@ class Mnemo < Formula
   end
 
   test do
-    system "#{bin}/mnemo", "--help"
+    system bin/"mnemo", "--help"
   end
 end
