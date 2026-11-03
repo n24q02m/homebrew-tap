@@ -26,6 +26,18 @@ Cask files in `Casks/` are auto-updated on each upstream release by [goreleaser]
 |------|-------------|----------|
 | skret | Cloud-provider secret manager CLI | [n24q02m/skret](https://github.com/n24q02m/skret) |
 
+## Available formulae
+
+| Name | Description | Upstream |
+|------|-------------|----------|
+| wet | Streamable HTTP/stdio MCP server and CLI for web extraction and search | [n24q02m/wet-mcp](https://github.com/n24q02m/wet-mcp) |
+| mnemo | Episodic and semantic memory MCP server and CLI | [n24q02m/mnemo-mcp](https://github.com/n24q02m/mnemo-mcp) |
+| crg | Code review and AST symbol graph MCP server and CLI | [n24q02m/better-code-review-graph](https://github.com/n24q02m/better-code-review-graph) |
+| telegram | Telegram client and bot MCP server and CLI | [n24q02m/telegram](https://github.com/n24q02m/telegram) |
+| email | Unified IMAP and SMTP email MCP server and CLI | [n24q02m/email](https://github.com/n24q02m/email) |
+| notion | Notion workspace and document MCP server and CLI | [n24q02m/notion](https://github.com/n24q02m/notion) |
+| workspace | Google Workspace MCP server and CLI | [n24q02m/workspace](https://github.com/n24q02m/workspace) |
+
 ## License
 
 Apache-2.0.
