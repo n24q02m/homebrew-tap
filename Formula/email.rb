@@ -13,6 +13,6 @@ class Email < Formula
   end
 
   test do
-    system "#{bin}/email", "--help"
+    system bin/"email", "--help"
   end
 end
