@@ -12,6 +12,6 @@ class Crg < Formula
   end
 
   test do
-    system "#{bin}/crg", "--help"
+    system bin/"crg", "--help"
   end
 end
