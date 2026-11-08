@@ -12,6 +12,6 @@ class Wet < Formula
   end
 
   test do
-    system "#{bin}/wet", "--help"
+    system bin/"wet", "--help"
   end
 end

@@ -13,6 +13,6 @@ class Workspace < Formula
   end
 
   test do
-    system "#{bin}/workspace", "--help"
+    system bin/"workspace", "--help"
   end
 end
