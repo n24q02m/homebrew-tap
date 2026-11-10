@@ -1,8 +1,8 @@
 class Telegram < Formula
   desc "Client and bot MCP server and CLI for Telegram"
   homepage "https://github.com/n24q02m/telegram"
-  url "https://github.com/n24q02m/telegram/archive/refs/tags/v1.0.0.tar.gz"
-  sha256 "d19381492fc04470125ab092b1262b03ea7d808d5f089a686b43e22ff3a4763c"
+  url "https://github.com/n24q02m/telegram/archive/refs/tags/v4.23.0.tar.gz"
+  sha256 "9532da1b6117b9039cccbf75561ac9c1f44d18986b45705818b61791e97be78f"
   license "Apache-2.0"
 
   depends_on "python@3.12"
@@ -12,6 +12,6 @@ class Telegram < Formula
   end
 
   test do
-    system bin/"telegram", "--help"
+    system bin/"n24q02m-telegram", "--help"
   end
 end
