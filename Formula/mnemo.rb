@@ -1,8 +1,8 @@
 class Mnemo < Formula
   desc "Episodic and semantic memory MCP server and CLI"
-  homepage "https://github.com/n24q02m/mnemo-mcp"
-  url "https://github.com/n24q02m/mnemo-mcp/archive/refs/tags/v1.3.0.tar.gz"
-  sha256 "a71d999144a95175529a4926ec9c3ab66949384a586aec3103efa6de991f8bfc"
+  homepage "https://github.com/n24q02m/mnemo"
+  url "https://github.com/n24q02m/mnemo/archive/refs/tags/v2.21.0.tar.gz"
+  sha256 "5f9c5b2db82140e40e49500ac4d66d76ab13d4623b2efbbbd812f8e4e8ed028e"
   license "Apache-2.0"
 
   depends_on "python@3.12"
