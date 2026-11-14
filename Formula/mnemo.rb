@@ -39,17 +39,21 @@ class Mnemo < Formula
   # tree leave no Mach-O header room for keg relocation. The lock already is the release's
   # resolved environment (including its uv overrides), so there is no `uv pip check`.
   post_install_steps do
-    uv = "{{HOMEBREW_PREFIX}}/opt/uv/bin/uv"
-    venv = "{{var}}/mnemo/venv"
-    python = "#{venv}/bin/python"
-    pinned = ["--python", python, "--require-hashes", "--only-binary", ":all:", "--no-deps", "--quiet"]
-    remove venv, recursive: true
-    run uv, args: ["venv", "--quiet", "--python", "{{HOMEBREW_PREFIX}}/opt/python@3.13/bin/python3.13", venv],
-            env:  { "UV_PYTHON_DOWNLOADS" => "never" }
-    run uv, args: ["pip", "install", *pinned, "-r", "{{libexec}}/build-requirements.txt"]
-    run uv, args: ["pip", "install", *pinned, "--no-build-isolation", "-r", "{{libexec}}/requirements.txt"]
-    run uv, args: ["pip", "install", "--python", python, "--no-deps", "--no-index", "--quiet",
-                   "--find-links", "{{libexec}}", "n24q02m-mnemo=={{version}}"]
+    remove "{{var}}/mnemo/venv", recursive: true
+    run "{{HOMEBREW_PREFIX}}/opt/uv/bin/uv",
+        args: ["venv", "--quiet", "--python", "{{HOMEBREW_PREFIX}}/opt/python@3.13/bin/python3.13",
+               "{{var}}/mnemo/venv"],
+        env:  { "UV_PYTHON_DOWNLOADS" => "never" }
+    run "{{HOMEBREW_PREFIX}}/opt/uv/bin/uv",
+        args: ["pip", "install", "--python", "{{var}}/mnemo/venv/bin/python", "--require-hashes",
+               "--only-binary", ":all:", "--no-deps", "--quiet", "-r", "{{libexec}}/build-requirements.txt"]
+    run "{{HOMEBREW_PREFIX}}/opt/uv/bin/uv",
+        args: ["pip", "install", "--python", "{{var}}/mnemo/venv/bin/python", "--require-hashes",
+               "--only-binary", ":all:", "--no-deps", "--quiet", "--no-build-isolation",
+               "-r", "{{libexec}}/requirements.txt"]
+    run "{{HOMEBREW_PREFIX}}/opt/uv/bin/uv",
+        args: ["pip", "install", "--python", "{{var}}/mnemo/venv/bin/python", "--no-deps", "--no-index",
+               "--quiet", "--find-links", "{{libexec}}", "n24q02m-mnemo=={{version}}"]
   end
 
   def caveats
