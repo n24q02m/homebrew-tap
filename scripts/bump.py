@@ -5,14 +5,17 @@ Both package managers install the artifact the registry serves, and every
 dependency it pulls in is pinned by a hash that this script regenerates:
 
 * PyPI tools install the pure wheel plus two lock files. ``locks/<name>-<version>.txt``
-  is the release tag's ``uv.lock`` exported as hashed requirements;
+  is the release tag's ``uv.lock`` exported as hashed requirements (when the release
+  publishes its own ``requirements.lock`` asset, the export must match it byte for byte);
   ``locks/<name>-<version>.build.txt`` holds the hashed build backends of any
   dependency that publishes only an sdist. The installers run
   ``uv pip install --require-hashes --only-binary :all: --no-deps`` (build backends
   first, then the lock with ``--no-build-isolation``), so nothing unhashed runs.
-* npm tools install the registry tarball plus ``locks/<name>-<version>.package-lock.json``,
-  resolved from the published ``package.json`` as of the publish time. The installers
-  run ``npm ci --omit=dev --ignore-scripts``, which checks every integrity hash.
+* npm tools install the registry tarball plus ``locks/<name>-<version>.package-lock.json``:
+  the tarball's own ``npm-shrinkwrap.json`` (the tree the release was tested with) when it
+  ships one, else a lock resolved from the published ``package.json`` as of the publish
+  time. Every installed entry must carry an integrity hash, and the installers run
+  ``npm ci --omit=dev --ignore-scripts``, which checks each one.
 
 Lock files live in ``locks/`` next to ``Formula/`` or ``bucket/``; the formula or
 manifest names each one by URL and sha256.
@@ -76,6 +79,10 @@ PACKAGES: dict[str, Tool] = {
 }
 
 STABLE = re.compile(r"\d+(\.\d+)*")
+
+# Each Python release publishes the lock its CD job installed and tested, built with the
+# same `uv export` flags as `python_locks`; older releases predate the asset.
+RELEASE_LOCK = "requirements.lock"
 
 # PEP 517: an sdist without a [build-system] table builds with legacy setuptools.
 DEFAULT_BUILD_REQUIRES = ["setuptools>=40.8.0"]
@@ -301,6 +308,22 @@ def build_requires(sdist: bytes) -> list[str]:
     return list(data.get("build-system", {}).get("requires", DEFAULT_BUILD_REQUIRES))
 
 
+def release_lock_url(tool: Tool, version: str) -> str:
+    return f"https://github.com/n24q02m/{tool.repo}/releases/download/v{version}/{RELEASE_LOCK}"
+
+
+def release_lock(
+    tool: Tool, version: str, get: Callable[[str], bytes] = _get
+) -> bytes | None:
+    """The release's `requirements.lock` asset, or None for a release published before it."""
+    try:
+        return get(release_lock_url(tool, version))
+    except urllib.error.HTTPError as err:
+        if err.code == 404:
+            return None
+        raise
+
+
 def python_locks(
     package: str,
     release: Release,
@@ -337,6 +360,22 @@ def python_locks(
                 str(root),
             ]
         )
+        published = release_lock(tool, release.version, get)
+        if published is None:
+            source = ""
+            print(
+                f"::warning::{tool.repo} v{release.version} has no {RELEASE_LOCK} asset;"
+                " the lock comes from the tag's uv.lock alone"
+            )
+        elif published != exported.encode("utf-8"):
+            raise SystemExit(
+                f"{tool.repo} v{release.version}: {RELEASE_LOCK} differs from the uv.lock export"
+            )
+        else:
+            source = (
+                f"# Identical to the release asset {release_lock_url(tool, release.version)}\n"
+                f"# (sha256 {_sha256(published)}).\n"
+            )
         # A pin whose marker holds on no served platform (an override such as
         # `; sys_platform == 'unreachable'`) is never installed, so it needs no backend.
         installed = {
@@ -363,6 +402,7 @@ def python_locks(
         header = (
             f"# {tool.dist} {release.version}: every runtime dependency, exported from\n"
             f"# n24q02m/{tool.repo}@v{release.version} uv.lock by scripts/bump.py.\n"
+            + source
         )
         no_binary = "".join(
             f"--no-binary {_normalize(p['name'])}\n" for p in sdist_only
@@ -411,22 +451,57 @@ def npm_locks(
         raise SystemExit(f"{release.formula.url} changed while bumping")
     with tarfile.open(fileobj=io.BytesIO(data), mode="r:gz") as tar:
         manifest = tar.extractfile("package/package.json").read()
-    with tempfile.TemporaryDirectory() as tmp:
-        root = Path(tmp)
-        (root / "package.json").write_bytes(manifest)
-        run(
-            [
-                "npm",
-                "install",
-                "--package-lock-only",
-                "--ignore-scripts",
-                "--no-audit",
-                "--no-fund",
-                f"--before={release.published}",
-            ],
-            cwd=root,
+        try:
+            lock = tar.extractfile("package/npm-shrinkwrap.json").read()
+        except KeyError:
+            lock = None
+    if lock is None:
+        print(
+            f"::warning::{package} {release.version} ships no npm-shrinkwrap.json;"
+            " resolving its package.json as of the publish time"
         )
-        return {name: (root / "package-lock.json").read_bytes()}
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "package.json").write_bytes(manifest)
+            run(
+                [
+                    "npm",
+                    "install",
+                    "--package-lock-only",
+                    "--ignore-scripts",
+                    "--no-audit",
+                    "--no-fund",
+                    f"--before={release.published}",
+                ],
+                cwd=root,
+            )
+            lock = (root / "package-lock.json").read_bytes()
+    check_npm_lock(f"{package} {release.version}", lock)
+    return {name: lock}
+
+
+def check_npm_lock(where: str, body: bytes) -> None:
+    """Fail unless every entry `npm ci --omit=dev` installs names a URL and an integrity hash.
+
+    Dev entries are never installed and bundled entries arrive inside their parent's
+    tarball, so neither needs a hash of its own."""
+    packages = json.loads(body).get("packages")
+    if not isinstance(packages, dict):
+        raise SystemExit(
+            f"{where}: the npm lock has no `packages` map (lockfileVersion 2+)"
+        )
+    unpinned = sorted(
+        path
+        for path, entry in packages.items()
+        if path
+        and not entry.get("dev")
+        and not entry.get("inBundle")
+        and not (entry.get("resolved") and entry.get("integrity"))
+    )
+    if unpinned:
+        raise SystemExit(
+            f"{where}: npm lock entries without resolved+integrity: {unpinned}"
+        )
 
 
 def build_locks(package: str, release: Release) -> dict[str, bytes]:

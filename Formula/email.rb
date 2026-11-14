@@ -7,8 +7,10 @@ class Email < Formula
 
   depends_on "node"
 
-  # Every dependency is pinned by integrity hash: a package-lock.json resolved from the
-  # published package.json as of its publish time. scripts/bump.py regenerates it.
+  # Every dependency is pinned by integrity hash: the release tarball's npm-shrinkwrap.json
+  # (the tree its release was tested with) or, for a release without one, a package-lock.json
+  # resolved from the published package.json as of its publish time. scripts/bump.py
+  # regenerates it.
   resource "lock" do
     url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/email-1.43.0.package-lock.json"
     sha256 "74518d790694a785186621dbb9705ec066c80beeb955b91c7ff12860a8868813"

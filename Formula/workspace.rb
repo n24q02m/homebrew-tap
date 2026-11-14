@@ -7,8 +7,10 @@ class Workspace < Formula
 
   depends_on "node"
 
-  # Every dependency is pinned by integrity hash: a package-lock.json resolved from the
-  # published package.json as of its publish time. scripts/bump.py regenerates it.
+  # Every dependency is pinned by integrity hash: the release tarball's npm-shrinkwrap.json
+  # (the tree its release was tested with) or, for a release without one, a package-lock.json
+  # resolved from the published package.json as of its publish time. scripts/bump.py
+  # regenerates it.
   resource "lock" do
     url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/workspace-0.7.0.package-lock.json"
     sha256 "a5df90c43f97a1f70aff95efb16bacb1280ad3e576ce7ccea2aa15989c80d5fb"
