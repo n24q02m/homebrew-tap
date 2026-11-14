@@ -24,6 +24,8 @@ import hashlib
 import json
 import re
 import sys
+import time
+import urllib.error
 import urllib.request
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -45,6 +47,10 @@ PACKAGES: dict[str, tuple[str, str]] = {
 
 STABLE = re.compile(r"\d+(\.\d+)*")
 
+# Registry reads run in CI and in release CD, where a dropped TLS handshake or a
+# 5xx/429 is routine; a 4xx is an answer and fails at once.
+ATTEMPTS = 4
+
 
 @dataclass(frozen=True)
 class Artifact:
@@ -61,8 +67,17 @@ class Release:
 
 def _get(url: str) -> bytes:
     req = urllib.request.Request(url, headers={"User-Agent": "n24q02m-tap-bump"})
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        return resp.read()
+    for attempt in range(1, ATTEMPTS + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                return resp.read()
+        except urllib.error.URLError as err:
+            code = getattr(err, "code", None)
+            client_error = code is not None and code < 500 and code != 429
+            if client_error or attempt == ATTEMPTS:
+                raise
+            time.sleep(2**attempt)
+    raise AssertionError("unreachable")  # pragma: no cover
 
 
 def _get_json(url: str) -> dict:
