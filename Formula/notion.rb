@@ -7,9 +7,19 @@ class Notion < Formula
 
   depends_on "node"
 
+  # Every dependency is pinned by integrity hash: a package-lock.json resolved from the
+  # published package.json as of its publish time. scripts/bump.py regenerates it.
+  resource "lock" do
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/notion-2.43.0.package-lock.json"
+    sha256 "505d34a9e1203756457042db0e0bea72544ac49bb4374fcafc5a1bf2edeb6349"
+  end
+
   def install
-    system "npm", "install", *std_npm_args
-    bin.install_symlink libexec/"bin/notion"
+    resource("lock").stage { buildpath.install Dir["*.json"].first => "package-lock.json" }
+    system "npm", "ci", "--omit=dev", "--ignore-scripts", "--no-audit", "--no-fund",
+           "--cache=#{HOMEBREW_CACHE}/npm_cache"
+    libexec.install Dir["*"]
+    (bin/"notion").write_env_script formula_opt_bin("node")/"node", "#{libexec}/bin/cli.mjs", {}
   end
 
   test do
