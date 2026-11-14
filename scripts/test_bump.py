@@ -125,6 +125,41 @@ class Http(unittest.TestCase):
             self.assertEqual(bump._get_json("https://pypi.org/x"), {"ok": True})
         self.assertEqual(urlopen.call_args.args[0].full_url, "https://pypi.org/x")
 
+    def test_transient_errors_are_retried(self):
+        resp = mock.MagicMock()
+        resp.__enter__.return_value.read.return_value = b"ok"
+        flaky = [
+            bump.urllib.error.URLError("EOF occurred in violation of protocol"),
+            bump.urllib.error.HTTPError("https://pypi.org/x", 503, "busy", {}, None),
+            resp,
+        ]
+        with (
+            mock.patch.object(bump.urllib.request, "urlopen", side_effect=flaky),
+            mock.patch.object(bump.time, "sleep") as sleep,
+        ):
+            self.assertEqual(bump._get("https://pypi.org/x"), b"ok")
+        self.assertEqual(sleep.call_count, 2)
+
+    def test_client_errors_are_not_retried(self):
+        err = bump.urllib.error.HTTPError("https://pypi.org/x", 404, "gone", {}, None)
+        with (
+            mock.patch.object(bump.urllib.request, "urlopen", side_effect=err) as op,
+            mock.patch.object(bump.time, "sleep"),
+            self.assertRaises(bump.urllib.error.HTTPError),
+        ):
+            bump._get("https://pypi.org/x")
+        self.assertEqual(op.call_count, 1)
+
+    def test_retries_are_bounded(self):
+        err = bump.urllib.error.URLError("down")
+        with (
+            mock.patch.object(bump.urllib.request, "urlopen", side_effect=err) as op,
+            mock.patch.object(bump.time, "sleep"),
+            self.assertRaises(bump.urllib.error.URLError),
+        ):
+            bump._get("https://pypi.org/x")
+        self.assertEqual(op.call_count, bump.ATTEMPTS)
+
 
 class ResolveStable(unittest.TestCase):
     def test_stable_release_is_returned(self):
