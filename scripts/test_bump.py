@@ -354,11 +354,24 @@ EXPORT = (
 )
 
 
+RELEASE_LOCK_URL = (
+    "https://github.com/n24q02m/wet/releases/download/v9.9.9/requirements.lock"
+)
+
+
+def not_found(url):
+    return bump.urllib.error.HTTPError(url, 404, "Not Found", {}, None)
+
+
 class PythonLocks(unittest.TestCase):
-    def fake(self, uv_lock=UV_LOCK, sdist=PYAES):
+    def fake(self, uv_lock=UV_LOCK, sdist=PYAES, asset=None):
         calls = []
 
         def get(url):
+            if url == RELEASE_LOCK_URL:
+                if asset is None:
+                    raise not_found(url)
+                return asset
             if url.endswith("pyproject.toml"):
                 return b"[project]\n"
             if url.endswith("uv.lock"):
@@ -415,9 +428,66 @@ class PythonLocks(unittest.TestCase):
         with self.assertRaises(SystemExit):
             bump.python_locks("wet", release(), get=get, run=run)
 
+    def test_release_lock_asset_matches_the_export(self):
+        get, run, _ = self.fake(asset=EXPORT.encode())
+        txt = bump.python_locks("wet", release(), get=get, run=run)["wet-9.9.9.txt"]
+        self.assertIn(
+            f"# Identical to the release asset {RELEASE_LOCK_URL}\n"
+            f"# (sha256 {sha(EXPORT.encode())}).\n--no-binary pyaes\n",
+            txt.decode(),
+        )
+
+    def test_release_lock_asset_that_differs_fails(self):
+        get, run, _ = self.fake(asset=EXPORT.encode() + b"extra==1\n")
+        with self.assertRaises(SystemExit):
+            bump.python_locks("wet", release(), get=get, run=run)
+
+    def test_release_without_the_asset_keeps_the_export(self):
+        get, run, _ = self.fake()
+        with mock.patch("builtins.print") as out:
+            txt = bump.python_locks("wet", release(), get=get, run=run)["wet-9.9.9.txt"]
+        self.assertNotIn(b"release asset", txt)
+        self.assertIn("has no requirements.lock asset", out.call_args.args[0])
+
+
+class ReleaseLock(unittest.TestCase):
+    TOOL = bump.PACKAGES["crg"]
+
+    def test_url_uses_the_source_repository(self):
+        self.assertEqual(
+            bump.release_lock_url(self.TOOL, "3.32.0"),
+            "https://github.com/n24q02m/crg/releases/download/v3.32.0/requirements.lock",
+        )
+
+    def test_other_http_errors_propagate(self):
+        def get(url):
+            raise bump.urllib.error.HTTPError(url, 403, "Forbidden", {}, None)
+
+        with self.assertRaises(bump.urllib.error.HTTPError):
+            bump.release_lock(self.TOOL, "3.32.0", get=get)
+
+
+NPM_LOCK = json.dumps(
+    {
+        "lockfileVersion": 3,
+        "packages": {
+            "": {"name": "@n24q02m/notion"},
+            "node_modules/a": {"resolved": "https://r/a.tgz", "integrity": "sha512-a"},
+            "node_modules/dev-only": {"dev": True},
+            "node_modules/a/node_modules/bundled": {"inBundle": True},
+        },
+    }
+).encode()
+
 
 class NpmLocks(unittest.TestCase):
     PKG = tar_gz({"package/package.json": b'{"name": "@n24q02m/notion"}'})
+    SHRINKWRAPPED = tar_gz(
+        {
+            "package/package.json": b'{"name": "@n24q02m/notion"}',
+            "package/npm-shrinkwrap.json": NPM_LOCK,
+        }
+    )
 
     def rel(self, digest):
         art = bump.Artifact("https://registry/notion-2.0.0.tgz", digest)
@@ -430,13 +500,36 @@ class NpmLocks(unittest.TestCase):
             )
             self.assertIn("--ignore-scripts", cmd)
             self.assertIn("--before=2026-02-02T00:00:00.000Z", cmd)
-            (cwd / "package-lock.json").write_bytes(b"{}")
+            (cwd / "package-lock.json").write_bytes(NPM_LOCK)
             return ""
 
+        with mock.patch("builtins.print") as out:
+            locks = bump.npm_locks(
+                "notion", self.rel(sha(self.PKG)), get=lambda _u: self.PKG, run=run
+            )
+        self.assertEqual(locks, {"notion-2.0.0.package-lock.json": NPM_LOCK})
+        self.assertIn("ships no npm-shrinkwrap.json", out.call_args.args[0])
+
+    def test_shipped_shrinkwrap_is_the_lock(self):
         locks = bump.npm_locks(
-            "notion", self.rel(sha(self.PKG)), get=lambda _u: self.PKG, run=run
+            "notion",
+            self.rel(sha(self.SHRINKWRAPPED)),
+            get=lambda _u: self.SHRINKWRAPPED,
+            run=None,
         )
-        self.assertEqual(locks, {"notion-2.0.0.package-lock.json": b"{}"})
+        self.assertEqual(locks, {"notion-2.0.0.package-lock.json": NPM_LOCK})
+
+    def test_installed_entry_without_integrity_fails(self):
+        for entry in ({"resolved": "https://r/b.tgz"}, {"integrity": "sha512-b"}):
+            data = json.loads(NPM_LOCK)
+            data["packages"]["node_modules/b"] = entry
+            with self.subTest(entry=entry), self.assertRaises(SystemExit) as err:
+                bump.check_npm_lock("notion 2.0.0", json.dumps(data).encode())
+            self.assertIn("node_modules/b", str(err.exception))
+
+    def test_lock_without_packages_fails(self):
+        with self.assertRaises(SystemExit):
+            bump.check_npm_lock("notion 2.0.0", b'{"lockfileVersion": 1}')
 
     def test_changed_tarball_fails(self):
         with self.assertRaises(SystemExit):

@@ -7,8 +7,10 @@ class Notion < Formula
 
   depends_on "node"
 
-  # Every dependency is pinned by integrity hash: a package-lock.json resolved from the
-  # published package.json as of its publish time. scripts/bump.py regenerates it.
+  # Every dependency is pinned by integrity hash: the release tarball's npm-shrinkwrap.json
+  # (the tree its release was tested with) or, for a release without one, a package-lock.json
+  # resolved from the published package.json as of its publish time. scripts/bump.py
+  # regenerates it.
   resource "lock" do
     url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/notion-2.43.0.package-lock.json"
     sha256 "505d34a9e1203756457042db0e0bea72544ac49bb4374fcafc5a1bf2edeb6349"
