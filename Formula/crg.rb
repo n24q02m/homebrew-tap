@@ -35,20 +35,21 @@ class Crg < Formula
     bin.write_exec_script venv/"bin/crg"
   end
 
-  def post_install
-    # The environment lives outside the keg: prebuilt native extensions in the dependency
-    # tree leave no Mach-O header room for keg relocation.
-    venv = var/"crg/venv"
-    rm_r venv if venv.exist?
-    ENV["UV_PYTHON_DOWNLOADS"] = "never"
-    uv = formula_opt_bin("uv")/"uv"
-    python = venv/"bin/python"
-    system uv, "venv", "--quiet", "--python", formula_opt_bin("python@3.13")/"python3.13", venv
-    pinned = %W[--python #{python} --require-hashes --only-binary :all: --no-deps --quiet]
-    system uv, "pip", "install", *pinned, "-r", libexec/"build-requirements.txt"
-    system uv, "pip", "install", *pinned, "--no-build-isolation", "-r", libexec/"requirements.txt"
-    system uv, "pip", "install", "--python", python, "--no-deps", "--quiet", *libexec.glob("*.whl")
-    system uv, "pip", "check", "--python", python
+  # The environment lives outside the keg: prebuilt native extensions in the dependency
+  # tree leave no Mach-O header room for keg relocation. The lock already is the release's
+  # resolved environment (including its uv overrides), so there is no `uv pip check`.
+  post_install_steps do
+    uv = "{{HOMEBREW_PREFIX}}/opt/uv/bin/uv"
+    venv = "{{var}}/crg/venv"
+    python = "#{venv}/bin/python"
+    pinned = ["--python", python, "--require-hashes", "--only-binary", ":all:", "--no-deps", "--quiet"]
+    remove venv, recursive: true
+    run uv, args: ["venv", "--quiet", "--python", "{{HOMEBREW_PREFIX}}/opt/python@3.13/bin/python3.13", venv],
+            env:  { "UV_PYTHON_DOWNLOADS" => "never" }
+    run uv, args: ["pip", "install", *pinned, "-r", "{{libexec}}/build-requirements.txt"]
+    run uv, args: ["pip", "install", *pinned, "--no-build-isolation", "-r", "{{libexec}}/requirements.txt"]
+    run uv, args: ["pip", "install", "--python", python, "--no-deps", "--no-index", "--quiet",
+                   "--find-links", "{{libexec}}", "n24q02m-crg=={{version}}"]
   end
 
   def caveats
