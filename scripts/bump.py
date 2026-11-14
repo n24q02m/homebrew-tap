@@ -4,7 +4,7 @@
 Both package managers install the same artifact the registry serves, so the
 version, URL and checksum are read from the registry rather than typed by hand:
 
-* PyPI tools: the formula builds the sdist, the Scoop manifest installs the wheel.
+* PyPI tools: both install the pure wheel; uv resolves its dependencies.
 * npm tools: both install the registry tarball.
 
 Usage (from a source repository's CD, after a stable release is published)::
@@ -75,21 +75,20 @@ def resolve_pypi(
     if version is None:
         version = get_json(f"https://pypi.org/pypi/{dist}/json")["info"]["version"]
     files = get_json(f"https://pypi.org/pypi/{dist}/{version}/json")["urls"]
-    sdist = [f for f in files if f["packagetype"] == "sdist"]
     wheel = [
         f
         for f in files
         if f["packagetype"] == "bdist_wheel"
         and f["filename"].endswith("-py3-none-any.whl")
     ]
-    if len(sdist) != 1 or len(wheel) != 1:
+    if len(wheel) != 1:
         raise SystemExit(
-            f"{dist} {version}: expected one sdist and one pure wheel, got {[f['filename'] for f in files]}"
+            f"{dist} {version}: expected one pure wheel, got {[f['filename'] for f in files]}"
         )
-    s, w = sdist[0], wheel[0]
+    w = wheel[0]
     return Release(
         version=version,
-        formula=Artifact(s["url"], s["digests"]["sha256"]),
+        formula=Artifact(w["url"], w["digests"]["sha256"]),
         # Scoop keeps the file name after `#/`, so the installer can pass the wheel to uv as-is.
         manifest=Artifact(f"{w['url']}#/{w['filename']}", w["digests"]["sha256"]),
     )

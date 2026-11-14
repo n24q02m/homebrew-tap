@@ -1,18 +1,23 @@
 class Telegram < Formula
   desc "Client and bot MCP server and CLI for Telegram"
   homepage "https://github.com/n24q02m/telegram"
-  url "https://files.pythonhosted.org/packages/a2/43/1e4f120715b3a49874361fd804392e656e4152a1458528a61b109bb20f8f/n24q02m_telegram-4.24.0.tar.gz"
-  sha256 "1a11e679a8be3cdebfdadab172fed3b8393ec46264caf7109a4afd52e17a7825"
+  url "https://files.pythonhosted.org/packages/c7/d8/63ea18bee72926ffa1521f778dd2f10dd3bdb74c47128b7a1d7ea017832d/n24q02m_telegram-4.24.0-py3-none-any.whl", using: :nounzip
+  sha256 "37a0535ca80377b2fcec9fb2040e3dced911e80994ea3b59270fad13fd83eaf1"
   license "Apache-2.0"
 
   depends_on "python@3.13"
+  depends_on "uv"
 
   def install
-    # The sdist pins only this package; its dependencies resolve from PyPI into the
-    # private virtualenv, the same set `pip install n24q02m-telegram` installs.
-    system Formula["python@3.13"].opt_bin/"python3.13", "-m", "venv", libexec
-    system libexec/"bin/python", "-m", "pip", "install", "--no-cache-dir", buildpath
-    bin.install_symlink libexec/"bin/telegram"
+    # The dependency tree ships prebuilt native extensions whose Mach-O headers have no
+    # room for keg relocation, so the keg keeps only the release wheel and uv builds its
+    # environment in the uv cache on first run, the same one `uvx --from n24q02m-telegram` uses.
+    libexec.install Dir["*.whl"]
+    wheel = libexec.glob("*.whl").first
+    python = formula_opt_bin("python@3.13")/"python3.13"
+    uv = formula_opt_bin("uv")/"uv"
+    env = { UV_PYTHON_DOWNLOADS: "never" }
+    (bin/"telegram").write_env_script uv, "tool run --python #{python} --from #{wheel} telegram", env
   end
 
   test do

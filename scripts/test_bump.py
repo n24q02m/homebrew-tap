@@ -52,10 +52,10 @@ def pypi_json(latest="9.9.9", files=(SDIST, WHEEL)):
 
 
 class ResolvePypi(unittest.TestCase):
-    def test_latest_sdist_for_formula_wheel_for_manifest(self):
+    def test_latest_wheel_for_formula_and_manifest(self):
         rel = bump.resolve_pypi("n24q02m-wet", None, get_json=pypi_json())
         self.assertEqual(rel.version, "9.9.9")
-        self.assertEqual(rel.formula, bump.Artifact(SDIST["url"], "a" * 64))
+        self.assertEqual(rel.formula, bump.Artifact(WHEEL["url"], "b" * 64))
         self.assertEqual(rel.manifest.url, WHEEL["url"] + "#/" + WHEEL["filename"])
         self.assertEqual(rel.manifest.sha256, "b" * 64)
 
@@ -144,6 +144,11 @@ class Rewrite(unittest.TestCase):
             '    url "https://example.invalid/inner.tar.gz"\n    sha256 "' + "0" * 64,
             out,
         )
+
+    def test_formula_keeps_url_options(self):
+        text = FORMULA.replace('.tar.gz"\n', '.whl", using: :nounzip\n', 1)
+        out = bump.rewrite_formula(text, bump.Artifact("https://new/x.whl", "c" * 64))
+        self.assertIn('  url "https://new/x.whl", using: :nounzip\n', out)
 
     def test_formula_without_pair_fails(self):
         with self.assertRaises(SystemExit):
