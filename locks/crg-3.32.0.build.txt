@@ -1,0 +1,3 @@
+# n24q02m-crg 3.32.0: build backends for the dependencies that
+# publish only an sdist, resolved by scripts/bump.py.
+# None: every dependency installs from a wheel.

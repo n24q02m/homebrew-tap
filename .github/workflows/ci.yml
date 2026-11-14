@@ -47,6 +47,12 @@ jobs:
       - name: Trust this tap
         # Homebrew refuses to load casks from an untrusted tap; this is our own checkout.
         run: brew trust n24q02m/tap
+      - name: Point lock URLs at this commit
+        # Formulae fetch their lock files from main; until this commit merges they exist
+        # only at its sha, so the tapped copy reads them from there.
+        env:
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: sed -i '' "s|/homebrew-tap/main/locks/|/homebrew-tap/$SHA/locks/|" "$(brew --repo n24q02m/tap)"/Formula/*.rb
       - name: Audit casks
         env:
           # --online hits the GitHub API; unauthenticated runner IPs hit the 60/hr limit.
@@ -72,11 +78,18 @@ jobs:
           persist-credentials: false
       - name: Unit tests (offline)
         run: python3 -m unittest discover -s scripts -p "test_*.py" -v
-      - name: Formulae match the registry latest release
-        # Read-only drift report: a release published since the last bump shows here.
+      - name: Formulae match the registry and their lock files
+        # Gate: each formula's artifact and lock checksums match the release it names.
         run: |
           for f in Formula/*.rb; do
-            python3 scripts/bump.py "$(basename "$f" .rb)" --formula "$f" --check
+            python3 scripts/bump.py "$(basename "$f" .rb)" --formula "$f" --pinned --check
+          done
+      - name: Drift report
+        # Not a gate: a release published since the last bump waits for bump.yml.
+        run: |
+          for f in Formula/*.rb; do
+            name="$(basename "$f" .rb)"
+            python3 scripts/bump.py "$name" --formula "$f" --check || echo "::warning::$name is behind the registry; dispatch bump.yml"
           done
 
   brew-install:
@@ -97,6 +110,12 @@ jobs:
         run: brew tap n24q02m/tap "$GITHUB_WORKSPACE"
       - name: Trust this tap
         run: brew trust n24q02m/tap
+      - name: Point lock URLs at this commit
+        # Formulae fetch their lock files from main; until this commit merges they exist
+        # only at its sha, so the tapped copy reads them from there.
+        env:
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: sed -i '' "s|/homebrew-tap/main/locks/|/homebrew-tap/$SHA/locks/|" "$(brew --repo n24q02m/tap)"/Formula/*.rb
       - name: Install
         env:
           HOMEBREW_NO_AUTO_UPDATE: "1"
