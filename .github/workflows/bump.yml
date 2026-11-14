@@ -20,8 +20,10 @@ permissions:
   contents: read
 
 concurrency:
-  # One bump at a time: each one merges into main.
-  group: bump
+  # One bump per package at a time. A group holds a single pending run, so a shared group
+  # would cancel queued bumps of other packages; bumps of different packages touch
+  # disjoint files and merge independently.
+  group: bump-${{ inputs.package }}
   cancel-in-progress: false
 
 jobs:
