@@ -61,3 +61,48 @@ jobs:
           for f in "${formulae[@]}"; do
             brew audit --formula --strict --online "n24q02m/tap/$(basename "$f" .rb)"
           done
+
+  bump-script:
+    name: bump script tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Unit tests (offline)
+        run: python3 -m unittest discover -s scripts -p "test_*.py" -v
+      - name: Formulae match the registry latest release
+        # Read-only drift report: a release published since the last bump shows here.
+        run: |
+          for f in Formula/*.rb; do
+            python3 scripts/bump.py "$(basename "$f" .rb)" --formula "$f" --check
+          done
+
+  brew-install:
+    name: brew install (${{ matrix.formula }})
+    # Installs every formula on the hosted macOS runner and runs its `brew test`
+    # (`<cli> --version` must print the formula version).
+    runs-on: macos-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        formula: [wet, mnemo, crg, telegram, notion, email, workspace]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Tap this checkout
+        run: brew tap n24q02m/tap "$GITHUB_WORKSPACE"
+      - name: Trust this tap
+        run: brew trust n24q02m/tap
+      - name: Install
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          FORMULA: ${{ matrix.formula }}
+        run: brew install --formula "n24q02m/tap/$FORMULA"
+      - name: Test
+        env:
+          FORMULA: ${{ matrix.formula }}
+        run: brew test "n24q02m/tap/$FORMULA"

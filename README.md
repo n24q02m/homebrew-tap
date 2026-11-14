@@ -20,6 +20,8 @@ brew install skret
 
 Cask files in `Casks/` are auto-updated on each upstream release by [goreleaser](https://goreleaser.com/) — do not edit by hand.
 
+Formula files in `Formula/` install the release the registry serves (the PyPI sdist for Python tools, the npm tarball for Node tools). `scripts/bump.py <name> --formula Formula/<name>.rb` rewrites the version, URL and checksum from the registry; the upstream release pipeline runs it after each stable release, and CI reports any formula that is behind the registry (`--check`) and installs every formula on macOS.
+
 ## Available casks
 
 | Name | Description | Upstream |
