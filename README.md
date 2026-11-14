@@ -20,6 +20,8 @@ brew install skret
 
 Cask files in `Casks/` are auto-updated on each upstream release by [goreleaser](https://goreleaser.com/) — do not edit by hand.
 
+Formula files in `Formula/` install the release the registry serves. Node tools install the npm tarball. Python tools keep the PyPI wheel and run it with [uv](https://docs.astral.sh/uv/) on Homebrew's `python@3.13`; uv builds the dependency environment in its cache on first run, because prebuilt native extensions in those dependency trees cannot be relocated into a keg. `scripts/bump.py <name> --formula Formula/<name>.rb` rewrites the version, URL and checksum from the registry; the upstream release pipeline runs it after each stable release, and CI reports any formula that is behind the registry (`--check`) and installs every formula on macOS.
+
 ## Available casks
 
 | Name | Description | Upstream |
