@@ -85,11 +85,11 @@ jobs:
             python3 scripts/bump.py "$(basename "$f" .rb)" --formula "$f" --pinned --check
           done
       - name: Drift report
-        # Not a gate: a release published since the last bump waits for bump.yml.
+        # Not a gate: a release published since the last bump waits for cd.yml.
         run: |
           for f in Formula/*.rb; do
             name="$(basename "$f" .rb)"
-            python3 scripts/bump.py "$name" --formula "$f" --check || echo "::warning::$name is behind the registry; dispatch bump.yml"
+            python3 scripts/bump.py "$name" --formula "$f" --check || echo "::warning::$name is behind the registry; dispatch cd.yml"
           done
 
   brew-install:
