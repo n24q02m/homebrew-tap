@@ -20,7 +20,7 @@ dependency it pulls in is pinned by a hash that this script regenerates:
 Lock files live in ``locks/`` next to ``Formula/`` or ``bucket/``; the formula or
 manifest names each one by URL and sha256.
 
-Usage (``bump.yml`` in each repository runs this on ``workflow_dispatch``)::
+Usage (``cd.yml`` in each repository runs this on ``workflow_dispatch``)::
 
     python scripts/bump.py wet --formula Formula/wet.rb
     python scripts/bump.py wet --manifest bucket/wet.json
@@ -87,7 +87,7 @@ RELEASE_LOCK = "requirements.lock"
 # PEP 517: an sdist without a [build-system] table builds with legacy setuptools.
 DEFAULT_BUILD_REQUIRES = ["setuptools>=40.8.0"]
 
-# Registry reads run in CI and in bump.yml, where a dropped TLS handshake or a
+# Registry reads run in CI and in cd.yml, where a dropped TLS handshake or a
 # 5xx/429 is routine; a 4xx is an answer and fails at once.
 ATTEMPTS = 4
 
