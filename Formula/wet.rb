@@ -1,8 +1,8 @@
 class Wet < Formula
   desc "Streamable HTTP/stdio MCP server and CLI for web extraction and search"
   homepage "https://github.com/n24q02m/wet"
-  url "https://files.pythonhosted.org/packages/31/0b/056960e573555060d079c4ee54b8cda11ee2230127cd18d94516d5891cc5/n24q02m_wet-3.21.0-py3-none-any.whl", using: :nounzip
-  sha256 "c53f5422abc195483b14a77f00a77640d12083b60ef58b8b0fd6872a49483f25"
+  url "https://files.pythonhosted.org/packages/91/a4/9be7e102f6c2ffa6fcb5fc109701a25afae640d3495420194c6546b59bb8/n24q02m_wet-3.22.0-py3-none-any.whl", using: :nounzip
+  sha256 "8df66a9050d17447296ccd1d862baacfc2bec9de22a279e759cd648d1aea8c9d"
   license "Apache-2.0"
 
   depends_on "python@3.13"
@@ -18,13 +18,13 @@ class Wet < Formula
   # requirements, `build-lock` the build backends of dependencies that publish only an
   # sdist. scripts/bump.py regenerates both on each bump.
   resource "lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/wet-3.21.0.txt"
-    sha256 "ff40ad8c2e31d6e9babd763fa4bd641346133a545c55468cf8189d2a4518df8a"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/wet-3.22.0.txt"
+    sha256 "7f422c15a99f57b7df5131c155c1a63d4ac2a708c684beed4445117fd7bacb39"
   end
 
   resource "build-lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/wet-3.21.0.build.txt"
-    sha256 "346bd8eee0d6e79ad48e8326d70823e0c8c316ed8dd756e5496a3693b6186244"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/wet-3.22.0.build.txt"
+    sha256 "44d80d94e3978e215730c6f8333bcb2610ecd5aa15976d482c2eaa64e069429b"
   end
 
   def install
