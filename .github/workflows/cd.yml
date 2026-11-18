@@ -93,4 +93,8 @@ jobs:
           # Code scanning reports after CI starts; watch again so a late check also gates.
           sleep 60
           gh pr checks "$pr" --watch --fail-fast --interval 30
-          gh pr merge "$pr" --squash --match-head-commit "$head"
+          # The main-branch ruleset restricts updates of main to its bypass actors, and this
+          # app is one of them, so every merge is a bypass merge. Without --admin, gh refuses
+          # whenever GitHub reports the pull request as BLOCKED, which the update rule causes.
+          # The two watches above are the check gate.
+          gh pr merge "$pr" --squash --admin --match-head-commit "$head"
