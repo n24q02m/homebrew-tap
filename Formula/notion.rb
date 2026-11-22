@@ -1,8 +1,8 @@
 class Notion < Formula
   desc "Workspace and document MCP server and CLI for Notion"
   homepage "https://github.com/n24q02m/notion"
-  url "https://registry.npmjs.org/@n24q02m/notion/-/notion-2.44.0.tgz"
-  sha256 "854d7acd36125ad7e4057686ad30251ec0b3b14f84bdb006cf7192257cdaab03"
+  url "https://registry.npmjs.org/@n24q02m/notion/-/notion-2.45.0.tgz"
+  sha256 "2414b549d924129606d0863b022cdbc579351d10fb963f105a1165149f9b09b4"
   license "Apache-2.0"
 
   depends_on "node"
@@ -12,8 +12,8 @@ class Notion < Formula
   # resolved from the published package.json as of its publish time. scripts/bump.py
   # regenerates it.
   resource "lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/notion-2.44.0.package-lock.json"
-    sha256 "7d62a02f341cb50bc1fb12fb0b5c1812f48eb498c784116d41385dbcacec8e9f"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/notion-2.45.0.package-lock.json"
+    sha256 "d5cba299a933dc6483793a65c2914cb6fafe92cb911b5dc01e9778152f67a422"
   end
 
   def install
