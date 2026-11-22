@@ -1,8 +1,8 @@
 class Mnemo < Formula
   desc "Episodic and semantic memory MCP server and CLI"
   homepage "https://github.com/n24q02m/mnemo"
-  url "https://files.pythonhosted.org/packages/a7/45/30e6c3adbd608d6835e0d6f8c7b09eb344c585862b8bcc3c6cb85e0a95de/n24q02m_mnemo-2.23.0-py3-none-any.whl", using: :nounzip
-  sha256 "f23966bd792f7299ea5647252f4eb06005841da76f48de6d0afe30ae6d6ca2f9"
+  url "https://files.pythonhosted.org/packages/14/e4/c40452a3f81711afd5cea29617831dde11e4c0bcf7f050d34a21db454141/n24q02m_mnemo-2.24.0-py3-none-any.whl", using: :nounzip
+  sha256 "72f9ddf41a5a92091ffae52ec0f4145798bfc9d5e3f80a40c1976e749fc80cca"
   license "Apache-2.0"
 
   depends_on "python@3.13"
@@ -18,13 +18,13 @@ class Mnemo < Formula
   # requirements, `build-lock` the build backends of dependencies that publish only an
   # sdist. scripts/bump.py regenerates both on each bump.
   resource "lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/mnemo-2.23.0.txt"
-    sha256 "f42b7ec723c52182eacefa752dac5d466f6ac7929472c4ea23e808a57a2ccb3e"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/mnemo-2.24.0.txt"
+    sha256 "1316c41dd3c1ba79dfd0c2f5af340443cd3e83619ee4013f63741b5c6df611ac"
   end
 
   resource "build-lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/mnemo-2.23.0.build.txt"
-    sha256 "c989695993f800503eeb4812f7adb6eb9bcfc9f479282a83fb80d7d281300142"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/mnemo-2.24.0.build.txt"
+    sha256 "41e1ba433cf3c25de9d191ae25916bd1095a91e71d9039054e263eb6b8ca6b36"
   end
 
   def install
