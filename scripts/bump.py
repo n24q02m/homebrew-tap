@@ -91,6 +91,11 @@ DEFAULT_BUILD_REQUIRES = ["setuptools>=40.8.0"]
 # 5xx/429 is routine; a 4xx is an answer and fails at once.
 ATTEMPTS = 4
 
+# The one 4xx that is not an answer: a just-published npm tarball (see `_get_published`).
+# Ten minutes, the same window the release workflows wait for the registry.
+PUBLISH_LAG_ATTEMPTS = 40
+PUBLISH_LAG_DELAY = 15
+
 
 @dataclass(frozen=True)
 class Artifact:
@@ -125,6 +130,23 @@ def _get(url: str) -> bytes:
 
 def _get_json(url: str) -> dict:
     return json.loads(_get(url))
+
+
+def _get_published(url: str) -> bytes:
+    """`_get` for an artifact the registry document already lists.
+
+    npm adds a release to the package document before it serves the tarball, and
+    cd.yml dispatches this script as soon as the document lists the release, so
+    a 404 for that tarball is propagation lag rather than an answer."""
+    for attempt in range(1, PUBLISH_LAG_ATTEMPTS + 1):
+        try:
+            return _get(url)
+        except urllib.error.HTTPError as err:
+            if err.code != 404 or attempt == PUBLISH_LAG_ATTEMPTS:
+                raise
+            print(f"{url}: 404 while the registry propagates the release; retrying")
+            time.sleep(PUBLISH_LAG_DELAY)
+    raise AssertionError("unreachable")  # pragma: no cover
 
 
 def _run(cmd: list[str], cwd: Path | None = None) -> str:
@@ -175,7 +197,7 @@ def resolve_npm(
     name: str,
     version: str | None,
     get_json: Callable[[str], dict] = _get_json,
-    get: Callable[[str], bytes] = _get,
+    get: Callable[[str], bytes] = _get_published,
 ) -> Release:
     doc = get_json(f"https://registry.npmjs.org/{name}")
     if version is None:
