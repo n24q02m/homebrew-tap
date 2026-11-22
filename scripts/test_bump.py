@@ -224,6 +224,64 @@ class Http(unittest.TestCase):
         self.assertEqual(op.call_count, bump.ATTEMPTS)
 
 
+class PublishedArtifact(unittest.TestCase):
+    URL = "https://registry.npmjs.org/@n24q02m/email/-/email-1.45.0.tgz"
+
+    def not_found(self):
+        return bump.urllib.error.HTTPError(self.URL, 404, "Not Found", {}, None)
+
+    def test_404_while_the_registry_propagates_is_retried(self):
+        resp = mock.MagicMock()
+        resp.__enter__.return_value.read.return_value = b"tarball"
+        with (
+            mock.patch.object(
+                bump.urllib.request,
+                "urlopen",
+                side_effect=[self.not_found(), self.not_found(), resp],
+            ),
+            mock.patch.object(bump.time, "sleep") as sleep,
+        ):
+            self.assertEqual(bump._get_published(self.URL), b"tarball")
+        self.assertEqual(
+            sleep.call_args_list,
+            [mock.call(bump.PUBLISH_LAG_DELAY), mock.call(bump.PUBLISH_LAG_DELAY)],
+        )
+
+    def test_404_retries_are_bounded(self):
+        with (
+            mock.patch.object(
+                bump.urllib.request, "urlopen", side_effect=self.not_found()
+            ) as op,
+            mock.patch.object(bump.time, "sleep"),
+            self.assertRaises(bump.urllib.error.HTTPError),
+        ):
+            bump._get_published(self.URL)
+        self.assertEqual(op.call_count, bump.PUBLISH_LAG_ATTEMPTS)
+
+    def test_other_client_errors_fail_at_once(self):
+        err = bump.urllib.error.HTTPError(self.URL, 403, "Forbidden", {}, None)
+        with (
+            mock.patch.object(bump.urllib.request, "urlopen", side_effect=err) as op,
+            mock.patch.object(bump.time, "sleep"),
+            self.assertRaises(bump.urllib.error.HTTPError),
+        ):
+            bump._get_published(self.URL)
+        self.assertEqual(op.call_count, 1)
+
+    def test_resolve_npm_waits_for_a_tarball_the_document_lists(self):
+        body = b"tarball-bytes"
+        resp = mock.MagicMock()
+        resp.__enter__.return_value.read.return_value = body
+        with (
+            mock.patch.object(
+                bump.urllib.request, "urlopen", side_effect=[self.not_found(), resp]
+            ),
+            mock.patch.object(bump.time, "sleep"),
+        ):
+            rel = bump.resolve_npm("@n24q02m/notion", None, get_json=lambda _u: NPM_DOC)
+        self.assertEqual(rel.formula, bump.Artifact(NPM_TARBALL, sha(body)))
+
+
 class Run(unittest.TestCase):
     def test_missing_executable_fails(self):
         with (
