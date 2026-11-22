@@ -49,10 +49,12 @@ jobs:
         run: brew trust n24q02m/tap
       - name: Point lock URLs at this commit
         # Formulae fetch their lock files from main; until this commit merges they exist
-        # only at its sha, so the tapped copy reads them from there.
-        env:
-          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: sed -i '' "s|/homebrew-tap/main/locks/|/homebrew-tap/$SHA/locks/|" "$(brew --repo n24q02m/tap)"/Formula/*.rb
+        # only at its sha, so the tapped copy reads them from there. That sha is the checked-out
+        # commit, which on a pull request is its merge with main: a head that lags main lacks the
+        # lock files main gained since, while the formulae under test already point at them.
+        run: |
+          sha="$(git rev-parse HEAD)"
+          sed -i '' "s|/homebrew-tap/main/locks/|/homebrew-tap/$sha/locks/|" "$(brew --repo n24q02m/tap)"/Formula/*.rb
       - name: Audit casks
         env:
           # --online hits the GitHub API; unauthenticated runner IPs hit the 60/hr limit.
@@ -112,10 +114,12 @@ jobs:
         run: brew trust n24q02m/tap
       - name: Point lock URLs at this commit
         # Formulae fetch their lock files from main; until this commit merges they exist
-        # only at its sha, so the tapped copy reads them from there.
-        env:
-          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: sed -i '' "s|/homebrew-tap/main/locks/|/homebrew-tap/$SHA/locks/|" "$(brew --repo n24q02m/tap)"/Formula/*.rb
+        # only at its sha, so the tapped copy reads them from there. That sha is the checked-out
+        # commit, which on a pull request is its merge with main: a head that lags main lacks the
+        # lock files main gained since, while the formulae under test already point at them.
+        run: |
+          sha="$(git rev-parse HEAD)"
+          sed -i '' "s|/homebrew-tap/main/locks/|/homebrew-tap/$sha/locks/|" "$(brew --repo n24q02m/tap)"/Formula/*.rb
       - name: Install
         env:
           HOMEBREW_NO_AUTO_UPDATE: "1"
