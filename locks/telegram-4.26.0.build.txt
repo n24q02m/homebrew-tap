@@ -1,4 +1,4 @@
-# n24q02m-telegram 4.25.0: build backends for the dependencies that
+# n24q02m-telegram 4.26.0: build backends for the dependencies that
 # publish only an sdist, resolved by scripts/bump.py.
 setuptools==84.2.1 \
     --hash=sha256:3ff8b3b5492a0aa66960f4419365a86b84e013070d4313e4d4a6894f5d64d6bc \
