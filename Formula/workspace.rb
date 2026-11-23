@@ -1,8 +1,8 @@
 class Workspace < Formula
   desc "Google Workspace MCP server and CLI (Docs, Drive, Gmail, Calendar, Sheets)"
   homepage "https://github.com/n24q02m/workspace"
-  url "https://registry.npmjs.org/@n24q02m/workspace/-/workspace-0.9.0.tgz"
-  sha256 "65f08a4319d98473cba3d1df10155b1456732e2fd5913ba3cb8d5b5e9bf15979"
+  url "https://registry.npmjs.org/@n24q02m/workspace/-/workspace-0.9.1.tgz"
+  sha256 "759f6f654c5e5703e4d6b2d4adbea07448cfb6d37247cad268e27042eada88ef"
   license "Apache-2.0"
 
   depends_on "node"
@@ -12,8 +12,8 @@ class Workspace < Formula
   # resolved from the published package.json as of its publish time. scripts/bump.py
   # regenerates it.
   resource "lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/workspace-0.9.0.package-lock.json"
-    sha256 "7d6fa45c3cb28632d60930cfe80313c1314524e08d4cfea72bbf118268337ec1"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/workspace-0.9.1.package-lock.json"
+    sha256 "a9d13ea10474f2d4bcaa26afee541a3e5034adac4b044769e1420f1610a32be9"
   end
 
   def install
