@@ -1,8 +1,8 @@
 class Telegram < Formula
   desc "Client and bot MCP server and CLI for Telegram"
   homepage "https://github.com/n24q02m/telegram"
-  url "https://files.pythonhosted.org/packages/d6/3b/cd1cdd93a7dd2804513c228c00252d1314b43c61bdbbd259e8db66261bb8/n24q02m_telegram-4.26.1-py3-none-any.whl", using: :nounzip
-  sha256 "1f4395fa17259832f439a8e59acb6990afd1567f62a1732c192bbdd763a55fb1"
+  url "https://files.pythonhosted.org/packages/bc/67/9d1b82932bd6371a6a8e6c9abcaf5f9fdf2deb8beaab83630ebefa0ef72a/n24q02m_telegram-4.27.0-py3-none-any.whl", using: :nounzip
+  sha256 "0345892795ac7d946276d829f3b42e3c1051c7d47b685e62f19ddeffd82aa3cc"
   license "Apache-2.0"
 
   depends_on "python@3.13"
@@ -17,13 +17,13 @@ class Telegram < Formula
   # requirements, `build-lock` the build backends of dependencies that publish only an
   # sdist. scripts/bump.py regenerates both on each bump.
   resource "lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/telegram-4.26.1.txt"
-    sha256 "e6410cc2cb62e43dd561226798e2b6627b46a0ef29b44f47e02111a6cf68d4a6"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/telegram-4.27.0.txt"
+    sha256 "6d91926cc1088cc0e63f404589169f0e5618c5d08318060e807e2f5ce56c42ee"
   end
 
   resource "build-lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/telegram-4.26.1.build.txt"
-    sha256 "7f0d298d5226b3f3eb8221bbb122187eddc4ad3e1b81b3b80b2473e71a0750fe"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/telegram-4.27.0.build.txt"
+    sha256 "8fca0a5e3959bdb78792514a44be62797d14488fcf61fc7cb0ea4d5f72189a49"
   end
 
   def install
