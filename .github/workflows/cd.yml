@@ -10,7 +10,7 @@ name: CD
         description: Formula to bump
         required: true
         type: choice
-        options: [wet, mnemo, crg, telegram, notion, email, workspace]
+        options: [wet, mnemo, crg, telegram, bsr, fastretrieval, notion, email, workspace]
       version:
         description: Stable release to pin (empty = registry latest)
         required: false
