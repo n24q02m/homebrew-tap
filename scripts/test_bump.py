@@ -507,6 +507,111 @@ class PythonLocks(unittest.TestCase):
         self.assertNotIn(b"release asset", txt)
         self.assertIn("has no requirements.lock asset", out.call_args.args[0])
 
+    def test_extras_passed_to_uv_export(self):
+        calls = []
+
+        def get(url):
+            if url.endswith("pyproject.toml"):
+                return b"[project]\n"
+            if url.endswith("uv.lock"):
+                return UV_LOCK.replace("n24q02m-wet", "fastretrieval").encode()
+            return PYAES
+
+        def run(cmd, cwd=None):
+            calls.append(cmd)
+            if cmd[1] == "export":
+                return EXPORT
+            return "setuptools==1 \\\n    --hash=sha256:3\n"
+
+        locks = bump.python_locks("fastretrieval", release(), get=get, run=run)
+        self.assertIn("--extra", calls[0])
+        self.assertIn("server", calls[0])
+        self.assertIn(b"fastretrieval 9.9.9", locks["fastretrieval-9.9.9.txt"])
+
+    def test_missing_uv_lock_falls_back_to_wheel_metadata(self):
+        buf = io.BytesIO()
+        with mock.patch("zipfile.ZipFile") if False else bump.zipfile.ZipFile(buf, "w") as zf:
+            zf.writestr(
+                "better_semantic_release-9.9.9.dist-info/METADATA",
+                (
+                    "Metadata-Version: 2.1\n"
+                    "Name: better-semantic-release\n"
+                    "Version: 9.9.9\n"
+                    "Requires-Dist: click>=8.0\n"
+                    "Requires-Dist: tomli>=2.0 ; python_version < '3.11'\n"
+                    "Requires-Dist: fastapi>=0.1 ; extra == 'server'\n"
+                    "Requires-Dist: uvicorn>=0.1 ; (sys_platform == 'linux') and extra == 'server'\n"
+                    "Requires-Dist: pytest>=8.0 ; extra == 'dev'\n"
+                ),
+            )
+        wheel_bytes = buf.getvalue()
+        rel = bump.Release(
+            "9.9.9",
+            bump.Artifact("https://new/bsr.whl", sha(wheel_bytes)),
+            bump.Artifact("https://new/bsr.whl#/bsr.whl", sha(wheel_bytes)),
+            "2026-01-02T00:00:00Z",
+        )
+        calls = []
+
+        def get(url):
+            if url.endswith("uv.lock"):
+                raise not_found(url)
+            if url.endswith("bsr.whl"):
+                return wheel_bytes
+            return PYAES
+
+        def get_json(url):
+            if "/pyaes/" in url:
+                return {
+                    "urls": [
+                        {
+                            "packagetype": "sdist",
+                            "url": "https://files/pyaes.tar.gz",
+                            "digests": {"sha256": sha(PYAES)},
+                        }
+                    ]
+                }
+            return {"urls": [{"packagetype": "bdist_wheel"}]}
+
+        def run(cmd, cwd=None):
+            calls.append(cmd)
+            if cmd[1] == "pip":
+                in_path = Path(cmd[-1])
+                if in_path.name == "deps.in":
+                    deps_text = in_path.read_text(encoding="utf-8")
+                    self.assertIn("click>=8.0", deps_text)
+                    self.assertIn("tomli>=2.0 ; python_version < '3.11'", deps_text)
+                    self.assertNotIn("pytest", deps_text)
+                    return EXPORT
+                return "setuptools==1 \\\n    --hash=sha256:3\n"
+            raise AssertionError(f"unexpected cmd: {cmd}")
+
+        with mock.patch("builtins.print"):
+            locks = bump.python_locks(
+                "bsr", rel, get=get, run=run, get_json=get_json
+            )
+        txt = locks["bsr-9.9.9.txt"].decode()
+        self.assertIn("wheel METADATA", txt)
+        self.assertIn("--no-binary pyaes\n", txt)
+        self.assertIn("setuptools==1", locks["bsr-9.9.9.build.txt"].decode())
+
+        # Extra selection on fastretrieval wheel metadata keeps [server] and drops [dev]
+        reqs = bump.wheel_requires(wheel_bytes, extras=("server",))
+        self.assertIn("fastapi>=0.1", reqs)
+        self.assertIn("uvicorn>=0.1 ; (sys_platform == 'linux')", reqs)
+        self.assertNotIn("pytest>=8.0", reqs)
+
+    def test_wheel_metadata_tampered_wheel_fails(self):
+        rel = release()
+
+        def get(url):
+            if url.endswith("uv.lock"):
+                raise not_found(url)
+            return b"corrupt-wheel"
+
+        with mock.patch("builtins.print"), self.assertRaises(SystemExit):
+            bump.python_locks("bsr", rel, get=get, run=lambda *_a: "")
+
 
 class ReleaseLock(unittest.TestCase):
     TOOL = bump.PACKAGES["crg"]

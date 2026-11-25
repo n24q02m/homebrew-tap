@@ -35,6 +35,7 @@ another tool is still waiting for its bump.
 from __future__ import annotations
 
 import argparse
+import email.parser
 import hashlib
 import io
 import json
@@ -49,6 +50,7 @@ import time
 import tomllib
 import urllib.error
 import urllib.request
+import zipfile
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -66,6 +68,7 @@ class Tool:
     dist: str
     # GitHub repository under n24q02m; release tags are `v<version>`.
     repo: str
+    extras: tuple[str, ...] = ()
 
 
 PACKAGES: dict[str, Tool] = {
@@ -73,6 +76,8 @@ PACKAGES: dict[str, Tool] = {
     "mnemo": Tool(PYPI, "n24q02m-mnemo", "mnemo"),
     "crg": Tool(PYPI, "n24q02m-crg", "crg"),
     "telegram": Tool(PYPI, "n24q02m-telegram", "telegram"),
+    "bsr": Tool(PYPI, "better-semantic-release", "better-semantic-release"),
+    "fastretrieval": Tool(PYPI, "fastretrieval", "fastretrieval", extras=("server",)),
     "notion": Tool(NPM, "@n24q02m/notion", "notion"),
     "email": Tool(NPM, "@n24q02m/email", "email"),
     "workspace": Tool(NPM, "@n24q02m/workspace", "workspace"),
@@ -346,58 +351,137 @@ def release_lock(
         raise
 
 
+EXTRA_RE = re.compile(r"""(?:\(\s*|\b)extra\s*==\s*(['"])([^'"]+)\1\s*\)?""")
+
+
+def _select_req(req: str, extras: tuple[str, ...]) -> str | None:
+    """Filter a PEP 508 Requires-Dist header against `extras`, stripping matched extra clauses."""
+    spec, sep, marker = req.partition(";")
+    if not sep:
+        return req.strip()
+    matches = list(EXTRA_RE.finditer(marker))
+    if not matches:
+        return req.strip()
+    if not {m.group(2) for m in matches}.intersection(extras):
+        return None
+    cleaned = EXTRA_RE.sub("", marker)
+    cleaned = re.sub(r"\(\s*\)", "", cleaned)
+    cleaned = re.sub(r"^\s*(?:and|or)\b|\b(?:and|or)\s*$", "", cleaned).strip()
+    cleaned = re.sub(r"\b(?:and|or)\s+(?:and|or)\b", "and", cleaned).strip()
+    return f"{spec.strip()} ; {cleaned}" if cleaned else spec.strip()
+
+
+def wheel_requires(wheel: bytes, extras: tuple[str, ...] = ()) -> list[str]:
+    """Read and filter runtime Requires-Dist entries from a wheel's METADATA."""
+    with zipfile.ZipFile(io.BytesIO(wheel)) as zf:
+        meta_names = [n for n in zf.namelist() if n.endswith(".dist-info/METADATA")]
+        if len(meta_names) != 1:
+            raise SystemExit(f"expected one .dist-info/METADATA in wheel, got {meta_names}")
+        raw = zf.read(meta_names[0]).decode("utf-8")
+    msg = email.parser.Parser().parsestr(raw, headersonly=True)
+    reqs: list[str] = []
+    for req in msg.get_all("Requires-Dist", []):
+        selected = _select_req(req, extras)
+        if selected is not None:
+            reqs.append(selected)
+    return reqs
+
+
 def python_locks(
     package: str,
     release: Release,
     get: Callable[[str], bytes] = _get,
     run: Callable[..., str] = _run,
+    get_json: Callable[[str], dict] = _get_json,
 ) -> dict[str, bytes]:
     tool = PACKAGES[package]
     txt, build = lock_names(package, release.version)
     base = f"https://raw.githubusercontent.com/n24q02m/{tool.repo}/v{release.version}/"
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)
-        for name in ("pyproject.toml", "uv.lock"):
-            (root / name).write_bytes(get(base + name))
-        lock = tomllib.loads((root / "uv.lock").read_text(encoding="utf-8"))["package"]
-        # The release pipeline bumps pyproject.toml, not the project's own entry in
-        # uv.lock, so match the name only; `uv pip check` after installing the wheel
-        # proves the lock satisfies the released requirements.
-        project = [p for p in lock if p.get("source", {}).get("editable") == "."]
-        if [_normalize(p["name"]) for p in project] != [_normalize(tool.dist)]:
-            raise SystemExit(
-                f"{tool.repo} v{release.version}: uv.lock does not lock {tool.dist}"
-            )
-        exported = run(
-            [
-                "uv",
-                "export",
-                "--frozen",
-                "--no-dev",
-                "--no-emit-project",
-                "--no-header",
-                "--format",
-                "requirements-txt",
-                "--project",
-                str(root),
-            ]
-        )
-        published = release_lock(tool, release.version, get)
-        if published is None:
-            source = ""
-            print(
-                f"::warning::{tool.repo} v{release.version} has no {RELEASE_LOCK} asset;"
-                " the lock comes from the tag's uv.lock alone"
-            )
-        elif published != exported.encode("utf-8"):
-            raise SystemExit(
-                f"{tool.repo} v{release.version}: {RELEASE_LOCK} differs from the uv.lock export"
-            )
+        lock: list[dict] | None
+        try:
+            lock_bytes = get(base + "uv.lock")
+        except urllib.error.HTTPError as err:
+            if err.code != 404:
+                raise
+            lock = None
         else:
-            source = (
-                f"# Identical to the release asset {release_lock_url(tool, release.version)}\n"
-                f"# (sha256 {_sha256(published)}).\n"
+            (root / "pyproject.toml").write_bytes(get(base + "pyproject.toml"))
+            (root / "uv.lock").write_bytes(lock_bytes)
+            lock = tomllib.loads(lock_bytes.decode("utf-8"))["package"]
+
+        if lock is not None:
+            # The release pipeline bumps pyproject.toml, not the project's own entry in
+            # uv.lock, so match the name only; `uv pip check` after installing the wheel
+            # proves the lock satisfies the released requirements.
+            project = [p for p in lock if p.get("source", {}).get("editable") == "."]
+            if [_normalize(p["name"]) for p in project] != [_normalize(tool.dist)]:
+                raise SystemExit(
+                    f"{tool.repo} v{release.version}: uv.lock does not lock {tool.dist}"
+                )
+            exported = run(
+                [
+                    "uv",
+                    "export",
+                    "--frozen",
+                    "--no-dev",
+                    "--no-emit-project",
+                    "--no-header",
+                    "--format",
+                    "requirements-txt",
+                    *(arg for extra in tool.extras for arg in ("--extra", extra)),
+                    "--project",
+                    str(root),
+                ]
             )
+            published = (
+                None if tool.extras else release_lock(tool, release.version, get)
+            )
+            if published is None:
+                source = ""
+                if not tool.extras:
+                    print(
+                        f"::warning::{tool.repo} v{release.version} has no {RELEASE_LOCK} asset;"
+                        " the lock comes from the tag's uv.lock alone"
+                    )
+            elif published != exported.encode("utf-8"):
+                raise SystemExit(
+                    f"{tool.repo} v{release.version}: {RELEASE_LOCK} differs from the uv.lock export"
+                )
+            else:
+                source = (
+                    f"# Identical to the release asset {release_lock_url(tool, release.version)}\n"
+                    f"# (sha256 {_sha256(published)}).\n"
+                )
+        else:
+            print(
+                f"::warning::{tool.repo} v{release.version} has no uv.lock;"
+                " resolving its wheel METADATA as of the publish time"
+            )
+            wheel = get(release.formula.url)
+            if _sha256(wheel) != release.formula.sha256:
+                raise SystemExit(f"{release.formula.url} changed while bumping")
+            reqs = wheel_requires(wheel, tool.extras)
+            (root / "deps.in").write_text("\n".join(reqs) + "\n", encoding="utf-8")
+            exported = run(
+                [
+                    "uv",
+                    "pip",
+                    "compile",
+                    "--generate-hashes",
+                    "--universal",
+                    "--python-version",
+                    PYTHON,
+                    "--exclude-newer",
+                    release.published,
+                    "--no-header",
+                    "--no-annotate",
+                    str(root / "deps.in"),
+                ]
+            )
+            source = ""
+
         # A pin whose marker holds on no served platform (an override such as
         # `; sys_platform == 'unreachable'`) is never installed, so it needs no backend.
         installed = {
@@ -405,30 +489,47 @@ def python_locks(
             for m in REQUIREMENT.finditer(exported)
             if m.group(3) is None or marker_reachable(m.group(3))
         }
-        sdist_only = sorted(
-            (
-                p
-                for p in lock
-                if (_normalize(p["name"]), p.get("version")) in installed
-                and not p.get("wheels")
-            ),
-            key=lambda p: _normalize(p["name"]),
-        )
         requires: list[str] = []
-        for p in sdist_only:
-            sdist = p["sdist"]
-            data = get(sdist["url"])
-            if "sha256:" + _sha256(data) != sdist["hash"]:
-                raise SystemExit(f"{p['name']} sdist does not match uv.lock")
-            requires += build_requires(data)
+        sdist_names: list[str] = []
+        if lock is not None:
+            sdist_only = sorted(
+                (
+                    p
+                    for p in lock
+                    if (_normalize(p["name"]), p.get("version")) in installed
+                    and not p.get("wheels")
+                ),
+                key=lambda p: _normalize(p["name"]),
+            )
+            for p in sdist_only:
+                sdist = p["sdist"]
+                data = get(sdist["url"])
+                if "sha256:" + _sha256(data) != sdist["hash"]:
+                    raise SystemExit(f"{p['name']} sdist does not match uv.lock")
+                sdist_names.append(_normalize(p["name"]))
+                requires += build_requires(data)
+        else:
+            for name, ver in sorted(installed):
+                files = get_json(f"https://pypi.org/pypi/{name}/{ver}/json")["urls"]
+                if any(f["packagetype"] == "bdist_wheel" for f in files):
+                    continue
+                sdists = [f for f in files if f["packagetype"] == "sdist"]
+                if not sdists:
+                    raise SystemExit(f"{name} {ver}: neither wheel nor sdist on PyPI")
+                sdist = sdists[0]
+                data = get(sdist["url"])
+                if _sha256(data) != sdist["digests"]["sha256"]:
+                    raise SystemExit(f"{name} {ver} sdist changed while bumping")
+                sdist_names.append(name)
+                requires += build_requires(data)
+
+        source_ref = "uv.lock" if lock is not None else "wheel METADATA"
         header = (
             f"# {tool.dist} {release.version}: every runtime dependency, exported from\n"
-            f"# n24q02m/{tool.repo}@v{release.version} uv.lock by scripts/bump.py.\n"
+            f"# n24q02m/{tool.repo}@v{release.version} {source_ref} by scripts/bump.py.\n"
             + source
         )
-        no_binary = "".join(
-            f"--no-binary {_normalize(p['name'])}\n" for p in sdist_only
-        )
+        no_binary = "".join(f"--no-binary {name}\n" for name in sdist_names)
         build_header = (
             f"# {tool.dist} {release.version}: build backends for the dependencies that\n"
             "# publish only an sdist, resolved by scripts/bump.py.\n"
