@@ -1,8 +1,8 @@
 class Bsr < Formula
   desc "Drop-in python-semantic-release fork with built-in release-safety guards"
   homepage "https://github.com/n24q02m/better-semantic-release"
-  url "https://files.pythonhosted.org/packages/9e/b5/61000ffe48be26095593ec5ae961990050c360a8ac6fad50be26c2462cc3/better_semantic_release-1.14.0-py3-none-any.whl", using: :nounzip
-  sha256 "a868dac0c302461930001da77aaf545c3c11c734ae05ed4500d49a8bd807b94e"
+  url "https://files.pythonhosted.org/packages/77/a4/20862736faa5aa7c7616a8a2b6df52e340e73933c8438570bee1a3ca8afd/better_semantic_release-1.14.1-py3-none-any.whl", using: :nounzip
+  sha256 "4e1271eb542aee82593141cbc12eb4aff95e8f47cda3e4bfb466ad02d6314e22"
   license "Apache-2.0"
 
   depends_on "python@3.13"
@@ -12,13 +12,13 @@ class Bsr < Formula
   # requirements, `build-lock` the build backends of dependencies that publish only an
   # sdist. scripts/bump.py regenerates both on each bump.
   resource "lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/bsr-1.14.0.txt"
-    sha256 "c220ab319c867b8fd29fee4d40f02e40835f3966a00851724c8dc05d5eccc131"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/bsr-1.14.1.txt"
+    sha256 "bb33ac221b128bc27fb43ca46f77ab70b796578e3d5a8f18f9c085adb13e6ea6"
   end
 
   resource "build-lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/bsr-1.14.0.build.txt"
-    sha256 "f193f64dc4de7e5fcc03abe7574164bea635b6dc6e29276978c5767ff45d7f4d"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/bsr-1.14.1.build.txt"
+    sha256 "e12784b4859ab8f807c125c5796092b914c50251c170dd2c59b613ace55e0aa8"
   end
 
   def install
