@@ -1,8 +1,8 @@
 class Email < Formula
   desc "Unified IMAP and SMTP email MCP server and CLI"
   homepage "https://github.com/n24q02m/email"
-  url "https://registry.npmjs.org/@n24q02m/email/-/email-1.46.0.tgz"
-  sha256 "c5fc12c126ea289cfd3c69cce509b8eaaa9cc8e0857596fcd3b54b8e870ad136"
+  url "https://registry.npmjs.org/@n24q02m/email/-/email-1.47.0.tgz"
+  sha256 "2dd3b16386a48d3bdecee9e853d1a0eb8b1f3fa33a67b46b67c7ecb315bb8c7f"
   license "Apache-2.0"
 
   depends_on "node"
@@ -12,8 +12,8 @@ class Email < Formula
   # resolved from the published package.json as of its publish time. scripts/bump.py
   # regenerates it.
   resource "lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/email-1.46.0.package-lock.json"
-    sha256 "e1a0b34dfb8810f750e1a2a9c9539874135a6d57444820ab43c218005c3ed60e"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/email-1.47.0.package-lock.json"
+    sha256 "5794d54c8f75f6ac00ff6f6a6ea87a70da1d009806eefde2e8734ef9bf0ea400"
   end
 
   def install
