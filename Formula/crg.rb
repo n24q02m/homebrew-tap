@@ -1,8 +1,8 @@
 class Crg < Formula
   desc "Code review and AST symbol graph MCP server and CLI"
   homepage "https://github.com/n24q02m/crg"
-  url "https://files.pythonhosted.org/packages/d9/29/aaf3833d44aebc63d72fefff0e1e383e9e111df14156a74502fedfbc9a8f/n24q02m_crg-3.35.0-py3-none-any.whl", using: :nounzip
-  sha256 "7ab6dc4d4f599e89b0ee4fa58337d01c0412ebfa68ff7aafe1d0c852af8eb1d8"
+  url "https://files.pythonhosted.org/packages/5a/b2/bae1fb3db752f7e34aa7068ed82cdcfcecbfd9915461cb6c6761edc939a9/n24q02m_crg-3.36.0-py3-none-any.whl", using: :nounzip
+  sha256 "2040bbeea7d8dac4d25918df5fe4220ea19a2501c6d223c37b0c64c4be1625d9"
   license "Apache-2.0"
 
   depends_on "python@3.13"
@@ -18,13 +18,13 @@ class Crg < Formula
   # requirements, `build-lock` the build backends of dependencies that publish only an
   # sdist. scripts/bump.py regenerates both on each bump.
   resource "lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/crg-3.35.0.txt"
-    sha256 "2200cf20454ad3653e3123f82ea89a47271533bd4a23734efcbc6c4ae1705e27"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/crg-3.36.0.txt"
+    sha256 "6fd8e25baf0af586aad78114c5952e85195d89faddb29c78eeb5204998ebe826"
   end
 
   resource "build-lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/crg-3.35.0.build.txt"
-    sha256 "721160989edb8227438d970e750ec16a93a03a066e3828b8efc78ae8401a16e8"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/crg-3.36.0.build.txt"
+    sha256 "98a63c09402db454d7143dc14b7f1c8de78dc83a96a888e5a443d0693a5084d2"
   end
 
   def install
