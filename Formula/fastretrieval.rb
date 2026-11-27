@@ -1,8 +1,8 @@
 class Fastretrieval < Formula
   desc "Multi-model retrieval runtime for ONNX and GGUF embeddings and reranking"
   homepage "https://github.com/n24q02m/fastretrieval"
-  url "https://files.pythonhosted.org/packages/f1/1b/8a1b10c24a2d61af8d5f94791cf5aaace924f26f7aaa7f2f0128502869c1/fastretrieval-1.16.0-py3-none-any.whl", using: :nounzip
-  sha256 "4729ad3ef6fb087258e48d4fea4091ae69bbcac876da06711e4414105abcb092"
+  url "https://files.pythonhosted.org/packages/c5/23/d09a18d5955b1a100c5e2daf0ac02b4796ed8aaf5e7dc94acfaf49033e3b/fastretrieval-1.17.0-py3-none-any.whl", using: :nounzip
+  sha256 "b2f2a1d2fcb259d3570b8e7885e4b0c1db4af93168fe5d7f84741004f3e7a6ef"
   license "Apache-2.0"
 
   depends_on "python@3.13"
@@ -18,13 +18,13 @@ class Fastretrieval < Formula
   # requirements, `build-lock` the build backends of dependencies that publish only an
   # sdist. scripts/bump.py regenerates both on each bump.
   resource "lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/fastretrieval-1.16.0.txt"
-    sha256 "80a097724634c6fb1bdc99cfc0110b13ca92612f34336b492af3464772f37ec8"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/fastretrieval-1.17.0.txt"
+    sha256 "7a2eee5c88839acafeb60192b6a861de54acf2191217e404b1d0d27819dd496a"
   end
 
   resource "build-lock" do
-    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/fastretrieval-1.16.0.build.txt"
-    sha256 "3b55c1e0bf042180847028148bcb5e23f3e9a9e8ab4f5c8ec4d10d1ffacee21f"
+    url "https://raw.githubusercontent.com/n24q02m/homebrew-tap/main/locks/fastretrieval-1.17.0.build.txt"
+    sha256 "42232143451c7dc4781d29d9b0768ec47777b13c7c14ecc0c7445e7bfeeb8379"
   end
 
   def install

@@ -1,5 +1,5 @@
-# fastretrieval 1.16.0: every runtime dependency, exported from
-# n24q02m/fastretrieval@v1.16.0 uv.lock by scripts/bump.py.
+# fastretrieval 1.17.0: every runtime dependency, exported from
+# n24q02m/fastretrieval@v1.17.0 uv.lock by scripts/bump.py.
 annotated-doc==0.0.6 \
     --hash=sha256:361ca0950cc7082f53fa69e9328409f40a62c61e57e0a47e1825a08078a58a53 \
     --hash=sha256:7969bb69912085b2285849c0dcac0b4b374fd180c13cf10a87f284ffcf347bbf
@@ -176,9 +176,9 @@ colorama==0.4.6 ; sys_platform == 'win32' \
     # via
     #   loguru
     #   tqdm
-fastapi==0.163.2 \
-    --hash=sha256:825a8fdd18d7bfcb1b86735e9805c59b7400d55c4060d3df5331b62ae452f004 \
-    --hash=sha256:e605c4c9b94be78b43aa8239a62ccf7b6684346cdc9e053633feab0ab21b87c7
+fastapi==0.165.0 \
+    --hash=sha256:896f48462042bb4f162147eb8fac7e858753dc1f486765709baf105d70e4fc5b \
+    --hash=sha256:dd94d4128319c1e1d50535ab023ab698f850a4d2822f0e181747b46f4ff3c0ab
     # via fastretrieval
 filelock==4.2.11 \
     --hash=sha256:020e229e4bb9d410fc799c07ddf45fa217cba970278f40b30751d94f309b69e2 \
