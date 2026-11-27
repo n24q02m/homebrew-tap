@@ -1,7 +1,7 @@
-# n24q02m-telegram 4.27.0: every runtime dependency, exported from
-# n24q02m/telegram@v4.27.0 uv.lock by scripts/bump.py.
-# Identical to the release asset https://github.com/n24q02m/telegram/releases/download/v4.27.0/requirements.lock
-# (sha256 0b7c7927d626379748aa85cca3274ce49be1e042d5eb95a1446b1fdff7360f2a).
+# n24q02m-telegram 4.28.0: every runtime dependency, exported from
+# n24q02m/telegram@v4.28.0 uv.lock by scripts/bump.py.
+# Identical to the release asset https://github.com/n24q02m/telegram/releases/download/v4.28.0/requirements.lock
+# (sha256 a4c8ec206c408e4df095137d5031eb762aa774e2cbfd315c5dbb20e1c0295d4e).
 --no-binary pyaes
 aiofile==3.12.3 \
     --hash=sha256:5c1bcc9e929c50834608e8cc1a4cc1d7503eb60c15a535b779fd39e2f372c017 \
@@ -30,9 +30,9 @@ attrs==26.1.0 \
     #   jsonschema
     #   jsonschema-path
     #   referencing
-authlib==1.9.8 \
-    --hash=sha256:879735216a0b805a4dfedb4fdd19e7d75ebb8debd70cc7566da9d813db34458d \
-    --hash=sha256:de0b0138d398d0058f3139d8332bc8f674143dca0b446116ff285c7f417a4f7e
+authlib==1.9.9 \
+    --hash=sha256:0199649865fefb4304fc57683eaebb15614523073e41e09d98c72f3268ce5cbc \
+    --hash=sha256:cca3dffa51c8d80d6df19aee2279e47219dc996f5a527c06ac2e39d0757c99ef
     # via fastmcp-slim
 beartype==0.23.1 \
     --hash=sha256:4461b4dc57e3fdd6c8a8464b22cf118002eea107c33e9fef651c69068ab3cce3 \
@@ -40,9 +40,9 @@ beartype==0.23.1 \
     # via
     #   fastmcp-slim
     #   py-key-value-aio
-cachetools==8.0.0 \
-    --hash=sha256:5af562e5078f0086771a1e3832a9c3dbf5d336b6e2794a2c12a64680a4c9087d \
-    --hash=sha256:5ed01bd676800d51f0025605e4fd8ad0891550513e7b0a4c3da478463764e5c3
+cachetools==8.0.1 \
+    --hash=sha256:9e54fbdef4b24e8059e8a430893122febbaf9f5673f236fdb82256cdd090d506 \
+    --hash=sha256:deb1d376d4d28c2f33f3e3058043b005e0af75c35c094bd54053e27d2906ad95
     # via py-key-value-aio
 caio==0.12.10 \
     --hash=sha256:1d8b6e9275d8f9608b8ecb4b97189e7f1d0b8ed948fb552eb06518d6342a1e53 \
@@ -321,15 +321,15 @@ exceptiongroup==1.3.1 \
     --hash=sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219 \
     --hash=sha256:a7a39a3bd276781e98394987d3a5701d0c4edffb633bb7a5144577f82c773598
     # via fastmcp-slim
-fastmcp==4.2.1 \
-    --hash=sha256:06458edbb093e4d4ec42c99be5b65237df41648e6a2b7b3f54c5b45d561a7009 \
-    --hash=sha256:4f3f92d3a00011aea164092628ef28f3db471138f1179f756b1a1949cd6d876b
+fastmcp==4.2.2 \
+    --hash=sha256:a4bb3916ac9d97fc2cc65e36c7bd1a438616b5ec5f1b8d46c8e98d47f150227d \
+    --hash=sha256:c79c7fa8d268deb9f1f0be92418398838ba6d018635b7545b3a6bbc49b95baa3
     # via
     #   n24q02m-hull
     #   n24q02m-telegram
-fastmcp-slim==4.2.1 \
-    --hash=sha256:2523b2eec4886959426c9c6ca7d5f3ad978b9d7b037a2dabd912eb6f729cc429 \
-    --hash=sha256:bcbe48b0eeb8bb32b616d7b329832f5d03d16db02807a58457f5e2e44d1d0def
+fastmcp-slim==4.2.2 \
+    --hash=sha256:5a8100e8c527d52a953bb895f8936edb5bc721141b4c1a79807fe89af84ba091 \
+    --hash=sha256:c21e72ab66e2494d8d008885fc15f048840abae4d2979479f134668f92972f47
     # via fastmcp
 griffelib==2.4.1 \
     --hash=sha256:40c028dd2e623f464423f0e11e3c553158f1cf4f1368239a370534d73e1407ff \
@@ -422,9 +422,9 @@ mdurl==0.1.2 \
     --hash=sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8 \
     --hash=sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba
     # via markdown-it-py
-n24q02m-hull==0.11.0b1 \
-    --hash=sha256:4baff6e2646592bcfb1776783e574751a786f88a9a296e1f027c09ed98da004f \
-    --hash=sha256:cef4d6e416d9c172084cf135914bed46ccb8719630934f9c07780de8c2c9ca33
+n24q02m-hull==0.12.0 \
+    --hash=sha256:7e50a7949eed22382048bbbf08e0a21f6975c645aa97c90cc464ee60142104c6 \
+    --hash=sha256:dc939759ca2ea767d9f294e136266e4b37368e78561cca5120f6dc80144df9fc
     # via n24q02m-telegram
 openapi-pydantic==0.6.0 \
     --hash=sha256:11f3ac6ad41521fc156381ec587246b0c0ecea523bd9565ed74d3e7fac9d91cd \
@@ -444,15 +444,15 @@ pathable==0.6.0 \
     --hash=sha256:6404b8b82aef5ff0fd478934137128b99b12212ba35afdde5525ca4f8388ea58 \
     --hash=sha256:82c4ca6c98c502ad12e0d4e9779b6210afee93c38990988c8c5d1b49bdcdf566
     # via jsonschema-path
-platformdirs==4.14.5 \
-    --hash=sha256:32e9921db7385aa8169bee4fe9501923e5715ba9fb7ea3b9c69b0d8e0639f7a1 \
-    --hash=sha256:8e778c6fa421516f4d3369449f8df3b0e1b72c0e0005fe88e3ec772d0a14e750
+platformdirs==4.14.7 \
+    --hash=sha256:391513b74707c42335fff3ea17eaac657a7ee9ffcadd809634d34ea594d0122c \
+    --hash=sha256:5472257c1cf97a14658af52997011c7e59e4aebf3a24950b973c11b579e1b074
     # via
     #   fastmcp-slim
     #   n24q02m-hull
-py-key-value-aio==0.4.6 \
-    --hash=sha256:267c03c3e24cb99d3097612f8a5cfd8e11785c6a2975e272db0e303ea1850bfd \
-    --hash=sha256:820b30c7959fc738ea3d00160cdb10cd258f51e38737b2add530defeea1ded77
+py-key-value-aio==0.5.0 \
+    --hash=sha256:14268b72d1e2b94268c5b457a9bb065e9ee031c6617fa9c5adac795a776ccbfa \
+    --hash=sha256:20808520093cf8ae005a0ecb89a0cf1875859b48f1087f4ba262b3adc1f80c5b
     # via fastmcp-slim
 pyaes==1.6.1 \
     --hash=sha256:02c1b1405c38d3c370b085fb952dd8bea3fadcee6411ad99f312cc129c536d8f
@@ -872,9 +872,9 @@ starlette==1.10.0 \
     #   n24q02m-hull
     #   n24q02m-telegram
     #   sse-starlette
-telethon==1.45.0 \
-    --hash=sha256:339e24c83aedc9f12cbe389264627edc49779e4289c535aa90aafc4ce62f7972 \
-    --hash=sha256:4cb7ae269b8ab9dad9fc490b859f0bc2f885121e990f5b20407b1faa0db2a1d9
+telethon==1.46.0 \
+    --hash=sha256:8357f5719376a9c1ddf0999136a44594a5b21b453647f1e146c169483b6a67df \
+    --hash=sha256:c56e55e4a1f95fde556fe13459a542fc758e8ba501c0bf76f2fc5d8409fa81cb
     # via n24q02m-telegram
 truststore==0.10.5 ; sys_platform != 'emscripten' \
     --hash=sha256:30d36967ccaded5cbb38d602c433f53600036c79d502f4533a49b60a03bbefcd \
