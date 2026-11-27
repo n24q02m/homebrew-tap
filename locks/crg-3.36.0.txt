@@ -1,7 +1,7 @@
-# n24q02m-crg 3.35.0: every runtime dependency, exported from
-# n24q02m/crg@v3.35.0 uv.lock by scripts/bump.py.
-# Identical to the release asset https://github.com/n24q02m/crg/releases/download/v3.35.0/requirements.lock
-# (sha256 f01df75e7557bf79a500a16e82ae66be14191d4561c65cde20fdeefebe38ae54).
+# n24q02m-crg 3.36.0: every runtime dependency, exported from
+# n24q02m/crg@v3.36.0 uv.lock by scripts/bump.py.
+# Identical to the release asset https://github.com/n24q02m/crg/releases/download/v3.36.0/requirements.lock
+# (sha256 056ff48855eb27dcf90369e551f3b29e9a022cb91e025ae9c786e2b291bb54b4).
 aiofile==3.12.3 \
     --hash=sha256:5c1bcc9e929c50834608e8cc1a4cc1d7503eb60c15a535b779fd39e2f372c017 \
     --hash=sha256:caa6aa746b5e47e2165f7abd741b6415e49cf4d44fddc0f61844612cc3924d41
@@ -10,6 +10,10 @@ alembic==1.20.1 \
     --hash=sha256:83490def1f723413db5096591f7609ac52544805be93849170088ed04f5a2e0b \
     --hash=sha256:9970712cfb81ea26c8658d378aaa5b8f6ff9146e5bb111d70497c164016cf598
     # via n24q02m-crg
+annotated-doc==0.0.7 \
+    --hash=sha256:0a30ef8f5322a4173720ae6712dc9a5e58f5a19868f3f167b4b5778db066c2b5 \
+    --hash=sha256:6bc31bbbec6dfaaedc1676dbc11dbda96fe22a2b5c400e9ebad113fec44a9dc6
+    # via typer
 annotated-types==0.8.0 \
     --hash=sha256:13b2beaad985e05e2d6407ee4c4f35590b11f8d693a258a561055cac8f64cab7 \
     --hash=sha256:f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0
@@ -41,6 +45,17 @@ beartype==0.23.1 \
     --hash=sha256:4461b4dc57e3fdd6c8a8464b22cf118002eea107c33e9fef651c69068ab3cce3 \
     --hash=sha256:8b805f246b32931c74f2b321ea0939fe5bb2ff43c12a3eff19cc4c854b832e1d
     # via py-key-value-aio
+burner-redis==0.1.7 \
+    --hash=sha256:20eba1917e3bca9eea5957d5700ff8defcb5a209e57a7841d005549aa0151f44 \
+    --hash=sha256:39111467059b8a28f15ea061d2414ec25c3e57c65759983f90f4d358e7d6a72d \
+    --hash=sha256:458f88feeddfb40a586cc3fcbd8e9384bbdfd2a4512a695af4900e06052570d4 \
+    --hash=sha256:591a9d20685f9d6d22bf0c863b50b12dfcf328b06111b3f62c33cd3185d48ce0 \
+    --hash=sha256:7474ff092669fd11ef765411572cdafcc3d89b8054aef4ca0617be6d6be4c680 \
+    --hash=sha256:9b5adfe99aeb8407f468078f3769b2a63e9168fea12f7709df5d2a3b152706e4 \
+    --hash=sha256:a3d9569a376b690fb5876d454e4904443332dc3ad5c0057e149fc2ad220bf599 \
+    --hash=sha256:f6cf4ac666766b32fd63940aad0c120847905fd3102c17e5b6b305f91a21d079 \
+    --hash=sha256:f80c866996e0455d584eb3c0f3b067e411c632fb0519eab454e0968edf01e62c
+    # via pydocket
 cachetools==8.0.0 \
     --hash=sha256:5af562e5078f0086771a1e3832a9c3dbf5d336b6e2794a2c12a64680a4c9087d \
     --hash=sha256:5ed01bd676800d51f0025605e4fd8ad0891550513e7b0a4c3da478463764e5c3
@@ -265,12 +280,20 @@ click==8.5.1 \
     # via
     #   huggingface-hub
     #   uvicorn
+cloudpickle==3.1.3 \
+    --hash=sha256:1654f4f18e416447210a63c5c25a135d65a292156aa5fa519dfa4baf7726dddb \
+    --hash=sha256:cbe9fde14429a5db009ea05ce94e5182cf998c97b96918d50c10f73f9c2f4f33
+    # via pydocket
 colorama==0.4.6 ; sys_platform == 'win32' \
     --hash=sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44 \
     --hash=sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6
     # via
     #   loguru
     #   tqdm
+    #   typer
+cronsim==2.8 \
+    --hash=sha256:62115cabaa121953ac4bbf2e66808b5229ca6e47372a74e752b42fcdf28324a5
+    # via pydocket
 cryptography==50.0.2 \
     --hash=sha256:0ddc924c04591c2811ca024d62ecad4f7f6f08af8939c211438f48a16bd23602 \
     --hash=sha256:0ec5f09541743261e66e291b4a0cbf0fb2997aeaab6d9e9c740b9dba1b58d1c2 \
@@ -333,6 +356,7 @@ cryptography==50.0.2 \
     --hash=sha256:fdd28f912fccfec1846a94e2e1e8f9b0012f557f0c46fe4f3eb0d7a87afcf90b
     # via
     #   authlib
+    #   fastmcp-tasks
     #   joserfc
     #   n24q02m-hull
     #   pyjwt
@@ -360,19 +384,25 @@ exceptiongroup==1.3.1 \
     --hash=sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219 \
     --hash=sha256:a7a39a3bd276781e98394987d3a5701d0c4edffb633bb7a5144577f82c773598
     # via fastmcp-slim
-fastmcp==4.2.0 \
-    --hash=sha256:441351551edac39eed248f0ea0f1d87fd95f44812ffee8b72fa05a5053db903d \
-    --hash=sha256:833508360b9a5db6ae3524cf12471b31716c210feee0c726a867e38c43a9287f
+fastmcp==4.2.2 \
+    --hash=sha256:a4bb3916ac9d97fc2cc65e36c7bd1a438616b5ec5f1b8d46c8e98d47f150227d \
+    --hash=sha256:c79c7fa8d268deb9f1f0be92418398838ba6d018635b7545b3a6bbc49b95baa3
     # via
     #   n24q02m-crg
     #   n24q02m-hull
-fastmcp-slim==4.2.0 \
-    --hash=sha256:01578f6d1a1423ca073e9d2ea4a193eed3ed9a5330e121fbcd9415511cfd1c0f \
-    --hash=sha256:174239bed3ac47275afa7fe82941a65f86ad0314205195766c92b138c6dcfebe
+fastmcp-slim==4.2.2 \
+    --hash=sha256:5a8100e8c527d52a953bb895f8936edb5bc721141b4c1a79807fe89af84ba091 \
+    --hash=sha256:c21e72ab66e2494d8d008885fc15f048840abae4d2979479f134668f92972f47
+    # via
+    #   fastmcp
+    #   fastmcp-tasks
+fastmcp-tasks==4.2.2 \
+    --hash=sha256:562df7809fb9d9cfa635d92ad8c469f1ff3cfa351cce9f6d23847a3c58f21ef9 \
+    --hash=sha256:f46d45fdada7f2fa5f79974851c46803cdc90389f55c38b57f9e8dde268fee36
     # via fastmcp
-fastretrieval==1.16.0b1 \
-    --hash=sha256:a33d5f912093adb72cfe0fa19d887f7f6e2b37cf327eeaf73564a660003e4d7e \
-    --hash=sha256:ca147dfec2069bb05314bede5280b73fa9bd6222733a1bbc895dfbdf22db4fc4
+fastretrieval==1.16.0 \
+    --hash=sha256:00aaa79032bb3cfaa0afc997c846d752be82b8cff596b7e48b5122aaca44a9b1 \
+    --hash=sha256:4729ad3ef6fb087258e48d4fea4091ae69bbcac876da06711e4414105abcb092
     # via n24q02m-crg
 filelock==4.2.11 \
     --hash=sha256:020e229e4bb9d410fc799c07ddf45fa217cba970278f40b30751d94f309b69e2 \
@@ -597,9 +627,9 @@ mdurl==0.1.2 \
     --hash=sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8 \
     --hash=sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba
     # via markdown-it-py
-n24q02m-hull==0.11.0b1 \
-    --hash=sha256:4baff6e2646592bcfb1776783e574751a786f88a9a296e1f027c09ed98da004f \
-    --hash=sha256:cef4d6e416d9c172084cf135914bed46ccb8719630934f9c07780de8c2c9ca33
+n24q02m-hull==0.12.0 \
+    --hash=sha256:7e50a7949eed22382048bbbf08e0a21f6975c645aa97c90cc464ee60142104c6 \
+    --hash=sha256:dc939759ca2ea767d9f294e136266e4b37368e78561cca5120f6dc80144df9fc
     # via n24q02m-crg
 networkx==3.6.1 ; python_full_version < '3.12' \
     --hash=sha256:26b7c357accc0c8cde558ad486283728b65b6a95d85ee1cd66bafab4c8168509 \
@@ -721,6 +751,7 @@ opentelemetry-api==1.45.2 \
     # via
     #   fastmcp-slim
     #   mcp
+    #   pydocket
 packaging==26.3 \
     --hash=sha256:94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79 \
     --hash=sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c
@@ -738,6 +769,10 @@ platformdirs==4.14.5 \
     # via
     #   fastmcp-slim
     #   n24q02m-hull
+prometheus-client==0.26.0 \
+    --hash=sha256:04a91bcf94e2cf74a44a1a874d651a2e853ed354b6e822f3b7487751465d5c2b \
+    --hash=sha256:fa93d06737aa02bacd05794768508bb97d2fbee28cb3bca04eaae92f0ca953d6
+    # via pydocket
 protobuf==7.36.2 \
     --hash=sha256:497d0463ff3316681da6c0b9e8d06cb465d61abce00b613ab42226175644d1bb \
     --hash=sha256:89f23aa53c24553a2416fd4fd1ec06f74fa42b14b546d8883128813f775bbfd2 \
@@ -753,7 +788,9 @@ protobuf==7.36.2 \
 py-key-value-aio==0.4.6 \
     --hash=sha256:267c03c3e24cb99d3097612f8a5cfd8e11785c6a2975e272db0e303ea1850bfd \
     --hash=sha256:820b30c7959fc738ea3d00160cdb10cd258f51e38737b2add530defeea1ded77
-    # via fastmcp-slim
+    # via
+    #   fastmcp-slim
+    #   pydocket
 pycparser==3.12 ; implementation_name != 'PyPy' and platform_python_implementation != 'PyPy' \
     --hash=sha256:a076f3f489b39b43ed13563a1dafe42447445bec2e294154ec5c57fcdda4c85e \
     --hash=sha256:f03387877eab82ce01bbdfd0ba7252ee55a90b1c708d5129e2ce915475cf1db6
@@ -768,6 +805,7 @@ pydantic==2.14.3 \
     #   n24q02m-hull
     #   openapi-pydantic
     #   pydantic-settings
+    #   typer
 pydantic-core==2.50.4 \
     --hash=sha256:0001d6920e3a5d92758cda460d6dc9f918a78ad6d5d092f1c8b5395e6b775356 \
     --hash=sha256:0574866e05f6adeecc520d87e87dd06210c0a51706341f6ef8421572f5a64444 \
@@ -872,6 +910,10 @@ pydantic-settings==2.16.3 \
     # via
     #   fastmcp-slim
     #   n24q02m-crg
+pydocket==0.29.1 \
+    --hash=sha256:aac1b26d3e993314f6b92c9957b09c3dd9bfa1d942ef46dbe6c906757b2cc94d \
+    --hash=sha256:d02ab943d9616aea44295011f5a21345f78f08c11ef5c819ab19fe8224f62791
+    # via fastmcp-tasks
 pygments==2.21.0 \
     --hash=sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9 \
     --hash=sha256:610ca751c9bc2492b38eb9a38a7fbc93edbbb2d7182edaf34e66ae493dee5c8c
@@ -893,6 +935,10 @@ python-dotenv==1.2.4 \
     # via
     #   fastmcp-slim
     #   pydantic-settings
+python-json-logger==4.2.0 \
+    --hash=sha256:158a52126fcd6869e09574d2b66272666f3dc8f468c62637ef9a1fa883719cb9 \
+    --hash=sha256:e371ebe22ec01e289850102091a2b1f6fc9e655c7f1f5f29073936756c290afa
+    # via pydocket
 python-multipart==0.0.34 \
     --hash=sha256:b998ae90ca6e1e363261ce2e0e230281b8af53867b757970abd69ee9edcd843a \
     --hash=sha256:ebacd224bd686eee2f9aa1066a657affe07435a185834e05e5235e2e59173e91
@@ -966,6 +1012,13 @@ pyyaml==6.0.3 \
     #   fastmcp-slim
     #   huggingface-hub
     #   jsonschema-path
+redis==8.0.1 \
+    --hash=sha256:47daa35a058c23468d6437f17a8c76882cb316b838ef763036af99b96cedd743 \
+    --hash=sha256:afc5a7a2f5a084f5b1880dec548dd45be17db7e43c82a30d84f952aefb05cfb0
+    # via
+    #   fastmcp-tasks
+    #   py-key-value-aio
+    #   pydocket
 referencing==0.37.0 \
     --hash=sha256:381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231 \
     --hash=sha256:44aefc3142c5b842538163acb373e24cce6632bd54bdb01b21ad5863489f50d8
@@ -983,7 +1036,9 @@ rich==15.0.0 \
     # via
     #   cyclopts
     #   fastmcp-slim
+    #   pydocket
     #   rich-rst
+    #   typer
 rich-rst==2.2.0 \
     --hash=sha256:1ea1c43813dc4a8d86475fce27ffb74e0ada3d4656c9f8130ba2a59868055fe9 \
     --hash=sha256:b1e6a67f8f694a6f36035624bf73e2b1a0a4be13edaf3ba5e654d9758b61073a
@@ -1091,6 +1146,10 @@ rpds-py==2026.9.1 \
     # via
     #   jsonschema
     #   referencing
+shellingham==1.5.4 \
+    --hash=sha256:7ecfff8f2fd72616f7481040475a65b2bf8af90a56c89140852d1120324e8686 \
+    --hash=sha256:8dbca0739d487e5bd35ab3ca4b36e11c4078f3a234bfce294b0a0291363404de
+    # via typer
 sqlalchemy==2.1.9 \
     --hash=sha256:0b44f50bd32fac29e12fce362f37a8b7e8f1e4d0dea02dcc837f00b5238ef5fc \
     --hash=sha256:0b6a25e87f313154e639632fdee02311c9b855ea957dc1a2c9e91ef1bd9b96cd \
@@ -1241,6 +1300,10 @@ truststore==0.10.5 ; sys_platform != 'emscripten' \
     # via
     #   httpcore2
     #   httpx2
+typer==0.29.2 \
+    --hash=sha256:b1998dc5f2c3dedafa1517a9521fa944cc4dc1fadcea085d81a3b10ebcaeb075 \
+    --hash=sha256:f30731f8ca758368b836b3714872e58e395cef8fcaff918c853b1969ed5274e7
+    # via pydocket
 typing-extensions==4.16.0 \
     --hash=sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8 \
     --hash=sha256:dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5
@@ -1258,6 +1321,7 @@ typing-extensions==4.16.0 \
     #   pydantic
     #   pydantic-core
     #   pydantic-settings
+    #   pydocket
     #   referencing
     #   sqlalchemy
     #   starlette
@@ -1269,10 +1333,16 @@ typing-inspection==0.4.5 \
     #   mcp
     #   pydantic
     #   pydantic-settings
+tzdata==2026.6 ; sys_platform == 'win32' \
+    --hash=sha256:0a10eec6e13ef16b627fabed9a5f2ba61a62b1c67f327305f4e7e412a70b4aec \
+    --hash=sha256:85d2cd9c09f81f0bb29db27759fc83af4f1e620efb814f8c5bf8b4cc4feece6d
+    # via pydocket
 uncalled-for==0.6.1 \
     --hash=sha256:1e8f86f972684db50f2888f07caa87d81a431584fa77856660e0c5e89f1cc778 \
     --hash=sha256:49d9a55a806529dbb844f64a2e3adc8f44ad0b0802f5d91381a09c088c44e144
-    # via fastmcp-slim
+    # via
+    #   fastmcp-slim
+    #   pydocket
 urllib3==2.8.0 \
     --hash=sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3 \
     --hash=sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63
